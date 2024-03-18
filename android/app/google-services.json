@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "511470048566",
+    "project_id": "vitalflowconnect",
+    "storage_bucket": "vitalflowconnect.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:511470048566:android:c3f504884e6e1f65a04f97",
+        "android_client_info": {
+          "package_name": "com.vitalflow_connect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_Lie2WM4N8en69v9tjjUFDFc_4wBrzC8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
