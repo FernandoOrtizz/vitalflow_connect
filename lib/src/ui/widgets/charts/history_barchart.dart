@@ -28,38 +28,43 @@ class BarChartSample1State extends State<HistoryBarchart> {
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                widget.icon,
-                const SizedBox(
-                  width: 32,
-                ),
-                Text(
-                  widget.title,
-                  style: TextStyle(
-                    color: widget.color,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    height: 70,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 32,
-            ),
-            Expanded(
-              child: BarChart(
-                randomData(),
+                  widget.icon,
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    widget.title,
+                    style: TextStyle(
+                      color: widget.color,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+              const SizedBox(
+                height: 32,
+              ),
+              Expanded(
+                child: BarChart(
+                  randomData(),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -77,7 +82,7 @@ class BarChartSample1State extends State<HistoryBarchart> {
           color: widget.color,
           borderRadius: BorderRadius.circular(8),
           borderDashArray: null,
-          width: 22,
+          width: 10,
           borderSide: BorderSide(color: widget.color, width: 2.0),
         ),
       ],
@@ -126,7 +131,7 @@ class BarChartSample1State extends State<HistoryBarchart> {
           sideTitles: SideTitles(
             showTitles: true,
             getTitlesWidget: getTitles,
-            reservedSize: 38,
+            reservedSize: 30,
           ),
         ),
         leftTitles: const AxisTitles(

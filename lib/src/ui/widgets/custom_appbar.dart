@@ -19,13 +19,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   Widget _buildDropdownButton() {
     const List<String> options = [
-      'Agregar +',
+      'Compartir mi VitalFlow',
+      'Agregar un VitalFlow',
       'Vista General',
       'Fernando Manzanares',
       'Hernan Reyes',
       'Ericson Martinez',
     ];
-    String selectedOption = options[2];
+    String selectedOption = options[3];
 
     return DropdownButton<String>(
       icon: const Icon(

@@ -1,22 +1,24 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:vitalflow_connect/firebase_options.dart';
-import 'package:vitalflow_connect/src/ui/pages/home/home_page.dart';
+import 'package:vitalflow_connect/src/ui/pages/login/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final PageController controller = PageController();
+
     return MaterialApp(
       title: 'VitalFlow',
       theme: ThemeData(
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
             ColorScheme.fromSeed(seedColor: Colors.deepPurple.shade400),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: LoginPage(controller: controller),
     );
   }
 }

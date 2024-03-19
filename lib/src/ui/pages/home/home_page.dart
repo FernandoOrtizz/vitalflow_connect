@@ -3,7 +3,7 @@ import 'package:vitalflow_connect/src/ui/pages/history/history_page.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/home_controller.dart';
 import 'package:vitalflow_connect/src/ui/widgets/bottom_menu.dart';
 import 'package:vitalflow_connect/src/ui/widgets/custom_appbar.dart';
-import '../../widgets/card_widget.dart';
+import '../../widgets/home/card_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
