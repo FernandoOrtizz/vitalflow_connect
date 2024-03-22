@@ -1,6 +1,56 @@
-import 'package:health/health.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
+import 'package:googleapis_auth/googleapis_auth.dart' as auth show AuthClient;
+import 'package:http/http.dart' as http;
 
 class HealthRepository {
+  Future<bool> obtainCredentials() async {
+    var googleSignin = await GoogleSignIn(scopes: [
+      'https://www.googleapis.com/auth/fitness.heart_rate.read',
+      'https://www.googleapis.com/auth/fitness.activity.read',
+      'https://www.googleapis.com/auth/fitness.blood_glucose.read',
+      'https://www.googleapis.com/auth/fitness.blood_pressure.read',
+      'https://www.googleapis.com/auth/fitness.sleep.read',
+      'https://www.googleapis.com/auth/fitness.oxygen_saturation.read'
+    ]);
+
+    await googleSignin.signIn();
+
+    final auth.AuthClient? client = await googleSignin.authenticatedClient();
+
+    assert(client != null, 'Authenticated client missing!');
+
+    //Obtener signos vitales
+    getSteps(client);
+
+    return true;
+  }
+
+  void getSteps(auth.AuthClient? client) async {
+    // URL del endpoint
+    String url =
+        'https://www.googleapis.com/fitness/v1/users/me/dataSources/derived:com.google.step_count.delta:com.google.android.gms:estimated_steps/datasets/1711087200000000000-1711125228448289164';
+    var token = client?.credentials.accessToken.data.toString();
+
+    // Encabezados de la solicitud
+    Map<String, String> headers = {'Authorization': "Bearer $token"};
+
+    // Realiza la solicitud GET
+    try {
+      http.Response response = await http.get(Uri.parse(url), headers: headers);
+
+      if (response.statusCode == 200) {
+        print('Respuesta exitosa:');
+        print(response.body);
+      } else {
+        print('Error: ${response.statusCode}');
+        print('Mensaje de error: ${response.body}');
+      }
+    } catch (e) {
+      print('Excepción durante la solicitud: $e');
+    }
+  }
+
   // final health = HealthFactory();
 
   // Future<bool> getHeartRate() async {
