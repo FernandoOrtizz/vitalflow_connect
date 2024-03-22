@@ -3,6 +3,7 @@ import 'package:vitalflow_connect/src/ui/pages/history/history_page.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/home_controller.dart';
 import 'package:vitalflow_connect/src/ui/widgets/bottom_menu.dart';
 import 'package:vitalflow_connect/src/ui/widgets/custom_appbar.dart';
+import 'package:vitalflow_connect/src/ui/widgets/home/permission_handler_widget.dart';
 import '../../widgets/home/card_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,6 +15,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final controller = HomeController();
+  late final ValueNotifier<String> bloodGlucoseNotifier;
+  @override
+  void initState() {
+    super.initState();
+    controller.bloodGlucose.addListener(_updateBloodGlucose);
+    controller.getData();
+    bloodGlucoseNotifier = controller.bloodGlucose;
+  }
+
+  @override
+  void dispose() {
+    controller.bloodGlucose.removeListener(_updateBloodGlucose);
+    super.dispose();
+  }
+
+  void _updateBloodGlucose() {
+    setState(() {}); // Actualizar el estado para reflejar el nuevo valor
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,51 +51,51 @@ class _HomePageState extends State<HomePage> {
             CardWidget(
               title: 'Latidos Por Minuto',
               iconData: Icons.monitor_heart_outlined,
-              value: '116',
+              value: bloodGlucoseNotifier,
               date: '2024-03-07',
               unit: 'LPM',
               iconColor: Colors.green.shade700,
             ),
-            CardWidget(
-              title: 'Sueño',
-              iconData: Icons.brightness_3_outlined,
-              value: '7.7',
-              date: '2024-03-07',
-              unit: 'Horas',
-              iconColor: Colors.blueGrey,
-            ),
-            CardWidget(
-              title: 'Oxígeno en sangre',
-              iconData: Icons.bloodtype_outlined,
-              value: '95',
-              date: '2024-03-07',
-              unit: '%',
-              iconColor: Colors.blue.shade300,
-            ),
-            CardWidget(
-              title: 'Pasos',
-              iconData: Icons.directions_walk_rounded,
-              value: '1094',
-              date: '2024-03-07',
-              unit: '',
-              iconColor: Colors.green.shade300,
-            ),
-            CardWidget(
-              title: 'Estrés',
-              iconData: Icons.face_retouching_natural_sharp,
-              value: '46',
-              date: '2024-03-07',
-              unit: '%',
-              iconColor: Colors.orange.shade300,
-            ),
-            CardWidget(
-              title: 'Presión Sanguínea',
-              iconData: Icons.favorite_border,
-              value: '120/80',
-              date: '2024-03-07',
-              unit: 'mmHg',
-              iconColor: Colors.pink.shade100,
-            ),
+            // CardWidget(
+            //   title: 'Sueño',
+            //   iconData: Icons.brightness_3_outlined,
+            //   value: '7.7',
+            //   date: '2024-03-07',
+            //   unit: 'Horas',
+            //   iconColor: Colors.blueGrey,
+            // ),
+            // CardWidget(
+            //   title: 'Oxígeno en sangre',
+            //   iconData: Icons.bloodtype_outlined,
+            //   value: '95',
+            //   date: '2024-03-07',
+            //   unit: '%',
+            //   iconColor: Colors.blue.shade300,
+            // ),
+            // CardWidget(
+            //   title: 'Pasos',
+            //   iconData: Icons.directions_walk_rounded,
+            //   value: '1094',
+            //   date: '2024-03-07',
+            //   unit: '',
+            //   iconColor: Colors.green.shade300,
+            // ),
+            // CardWidget(
+            //   title: 'Estrés',
+            //   iconData: Icons.face_retouching_natural_sharp,
+            //   value: '46',
+            //   date: '2024-03-07',
+            //   unit: '%',
+            //   iconColor: Colors.orange.shade300,
+            // ),
+            // CardWidget(
+            //   title: 'Presión Sanguínea',
+            //   iconData: Icons.favorite_border,
+            //   value: '120/80',
+            //   date: '2024-03-07',
+            //   unit: 'mmHg',
+            //   iconColor: Colors.pink.shade100,
+            // ),
           ],
         ),
       ),
