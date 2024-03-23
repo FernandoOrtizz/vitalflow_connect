@@ -20,7 +20,7 @@ class Activity implements Destination {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("steps")
-          .where("userEmail", isEqualTo: 'fernandomanzanares1999@gmail.com')
+          // .where("userEmail", isEqualTo: 'fernandomanzanares1999@gmail.com')
           .orderBy("date", descending: true) // Ordenar por fecha descendente
           .limit(1)
           .get();

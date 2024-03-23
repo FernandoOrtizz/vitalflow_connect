@@ -21,9 +21,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // final DateFormat formatter = DateFormat('dd "de" MMMM "del" yyyy', 'es');
-  final DateFormat formatter = DateFormat('yyyy-MM-dd');
-
   @override
   Widget build(BuildContext context) {
     final controller =
@@ -48,7 +45,7 @@ class _HomePageState extends State<HomePage> {
               title: 'Sueño',
               iconData: Icons.brightness_3_outlined,
               value: '7.7',
-              date: '2024-03-07',
+              date: DateTime.now(),
               unit: 'Horas',
               iconColor: Colors.blueGrey,
             ),
@@ -56,7 +53,7 @@ class _HomePageState extends State<HomePage> {
               title: 'Oxígeno en sangre',
               iconData: Icons.bloodtype_outlined,
               value: '95',
-              date: '2024-03-07',
+              date: DateTime.now(),
               unit: '%',
               iconColor: Colors.blue.shade300,
             ),
@@ -85,7 +82,7 @@ class _HomePageState extends State<HomePage> {
             iconData: Icons.battery_charging_full_rounded,
             value:
                 '', // Mostrar un indicador de carga mientras se obtienen los datos
-            date: '2024-03-07',
+            date: DateTime.now(),
             unit: 'Cals',
             iconColor: Colors.orange.shade300,
           );
@@ -94,7 +91,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Energía gastada',
             iconData: Icons.battery_charging_full_rounded,
             value: 'error',
-            date: '2024-03-07',
+            date: DateTime.now(),
             unit: 'Cals',
             iconColor: Colors.orange.shade300,
           );
@@ -103,7 +100,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Energía gastada',
             iconData: Icons.battery_charging_full_rounded,
             value: snapshot.data?["value"]?.toStringAsFixed(2) ?? '---',
-            date: snapshot.data?["date"] ?? '---',
+            date: snapshot.data?["date"].toDate(),
             unit: 'Cals',
             iconColor: Colors.orange.shade300,
           );
@@ -122,7 +119,7 @@ class _HomePageState extends State<HomePage> {
             iconData: Icons.favorite,
             value:
                 '', // Mostrar un indicador de carga mientras se obtienen los datos
-            date: '2024-03-07',
+            date: DateTime.now(),
             unit: 'LPM',
             iconColor: Colors.pink.shade100,
           );
@@ -131,7 +128,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Ritmo cardiaco',
             iconData: Icons.favorite,
             value: 'error',
-            date: '2024-03-07',
+            date: DateTime.now(),
             unit: 'LPM',
             iconColor: Colors.pink.shade100,
           );
@@ -140,7 +137,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Ritmo cardiaco',
             iconData: Icons.favorite,
             value: snapshot.data?["value"].toString() ?? '---',
-            date: snapshot.data?["date"].toString() ?? '---',
+            date: snapshot.data?["date"].toDate(),
             unit: 'LPM',
             iconColor: Colors.pink.shade100,
           );
@@ -159,7 +156,7 @@ class _HomePageState extends State<HomePage> {
             iconData: Icons.favorite_border_rounded,
             value:
                 '', // Mostrar un indicador de carga mientras se obtienen los datos
-            date: '2024-03-07',
+            date: DateTime.now(),
             unit: 'LPM',
             iconColor: Colors.pink.shade100,
           );
@@ -168,7 +165,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Ritmo cardiaco en reposo',
             iconData: Icons.favorite_border_rounded,
             value: 'error',
-            date: '2024-03-07',
+            date: DateTime.now(),
             unit: 'LPM',
             iconColor: Colors.pink.shade100,
           );
@@ -177,7 +174,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Ritmo cardiaco en reposo',
             iconData: Icons.favorite_border_rounded,
             value: snapshot.data?["value"].toString() ?? '---',
-            date: formatter.format(DateTime.now()) ?? '',
+            date: snapshot.data?["date"].toDate(),
             unit: 'LPM',
             iconColor: Colors.pink.shade100,
           );
@@ -195,7 +192,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Pasos',
             iconData: Icons.directions_walk_rounded,
             value: '',
-            date: '2024-03-07',
+            date: DateTime.now(),
             unit: '',
             iconColor: Colors.green.shade300,
           );
@@ -204,7 +201,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Pasos',
             iconData: Icons.directions_walk_rounded,
             value: 'error',
-            date: '2024-03-07',
+            date: DateTime.now(),
             unit: '',
             iconColor: Colors.green.shade300,
           );
@@ -213,7 +210,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Pasos',
             iconData: Icons.directions_walk_rounded,
             value: snapshot.data?["value"].toString() ?? '---',
-            date: snapshot.data?["date"].toString() ?? '---',
+            date: snapshot.data?["date"].toDate(),
             unit: '',
             iconColor: Colors.green.shade300,
           );

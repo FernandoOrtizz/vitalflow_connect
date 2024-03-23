@@ -9,16 +9,20 @@ class MonitoringPermission {
       CollectionReference users =
           FirebaseFirestore.instance.collection('monitoring_permissions');
 
-      QuerySnapshot querySnapshot =
-          await users.where('user_id', isEqualTo: email).get();
+      //filtro .where no funciona
+      QuerySnapshot querySnapshot = await users.get();
 
       List<Map<String, dynamic>> permissions = [];
 
       for (var doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        print(
+            '01237777777777777777777777777777777777777777777777777777777777777777777777777');
+        print(data);
         permissions.addAll(data['monitoring_permissions'] ?? []);
       }
 
+      print(permissions);
       return permissions;
     } catch (e) {
       print('Error al obtener los datos: $e');
