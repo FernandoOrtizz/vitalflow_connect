@@ -2,16 +2,20 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:googleapis_auth/googleapis_auth.dart' as auth show AuthClient;
 import 'package:http/http.dart' as http;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class HealthRepository {
+  int startTime = convertToNanoseconds(DateTime(2024, 3, 22, 0, 0));
+  int endTime = convertToNanoseconds(DateTime.now());
+
   Future<bool> obtainCredentials() async {
     var googleSignin = await GoogleSignIn(scopes: [
       'https://www.googleapis.com/auth/fitness.heart_rate.read',
       'https://www.googleapis.com/auth/fitness.activity.read',
-      'https://www.googleapis.com/auth/fitness.blood_glucose.read',
       'https://www.googleapis.com/auth/fitness.blood_pressure.read',
       'https://www.googleapis.com/auth/fitness.sleep.read',
-      'https://www.googleapis.com/auth/fitness.oxygen_saturation.read'
+      'https://www.googleapis.com/auth/fitness.oxygen_saturation.read',
     ]);
 
     await googleSignin.signIn();
@@ -21,15 +25,25 @@ class HealthRepository {
     assert(client != null, 'Authenticated client missing!');
 
     //Obtener signos vitales
-    getSteps(client);
+    await getSteps(client);
+    await getHeartRate(client);
+    await getRestingHeartRate(client);
+    await getCaloriesExpended(client);
+    // getOxygenSaturation(client);
+    // getSleep(client);
+
+    addUser();
 
     return true;
   }
 
-  void getSteps(auth.AuthClient? client) async {
+  Future<void> getSteps(auth.AuthClient? client) async {
+    int startTime = convertToNanoseconds(DateTime(2024, 3, 22, 0, 0));
+    int endTime = convertToNanoseconds(DateTime.now());
+
     // URL del endpoint
     String url =
-        'https://www.googleapis.com/fitness/v1/users/me/dataSources/derived:com.google.step_count.delta:com.google.android.gms:estimated_steps/datasets/1711087200000000000-1711125228448289164';
+        'https://www.googleapis.com/fitness/v1/users/me/dataSources/derived:com.google.step_count.delta:com.google.android.gms:estimated_steps/datasets/$startTime-$endTime';
     var token = client?.credentials.accessToken.data.toString();
 
     // Encabezados de la solicitud
@@ -40,73 +54,153 @@ class HealthRepository {
       http.Response response = await http.get(Uri.parse(url), headers: headers);
 
       if (response.statusCode == 200) {
-        print('Respuesta exitosa:');
-        print(response.body);
-      } else {
-        print('Error: ${response.statusCode}');
-        print('Mensaje de error: ${response.body}');
-      }
+      } else {}
     } catch (e) {
       print('Excepción durante la solicitud: $e');
     }
   }
 
-  // final health = HealthFactory();
+  Future<void> getHeartRate(auth.AuthClient? client) async {
+    int startTime = convertToNanoseconds(DateTime(2024, 3, 22, 0, 0));
+    int endTime = convertToNanoseconds(DateTime.now());
 
-  // Future<bool> getHeartRate() async {
+    // URL del endpoint
+    String url =
+        "https://www.googleapis.com/fitness/v1/users/me/dataSources/derived:com.google.heart_rate.bpm:com.google.android.gms:merge_heart_rate_bpm/datasets/$startTime-$endTime";
+    var token = client?.credentials.accessToken.data.toString();
 
-  //   bool requested =
-  //       await health.requestAuthorization([HealthDataType.HEART_RATE]);
+    // Encabezados de la solicitud
+    Map<String, String> headers = {'Authorization': "Bearer $token"};
 
-  //   if (requested) {
-  //     List<HealthDataPoint> healthData = await health.getHealthDataFromTypes(
-  //         DateTime.now().subtract(Duration(days: 7)),
-  //         DateTime.now(),
-  //         [HealthDataType.HEART_RATE]);
+    // Realiza la solicitud GET
+    try {
+      http.Response response = await http.get(Uri.parse(url), headers: headers);
 
-  //     return false;
-  //   }
-  // }
+      if (response.statusCode == 200) {
+        print(response.body);
+      } else {}
+    } catch (e) {
+      print('Excepción durante la solicitud: $e');
+    }
+  }
+
+  Future<void> getRestingHeartRate(auth.AuthClient? client) async {
+    int startTime = convertToNanoseconds(DateTime(2024, 3, 22, 0, 0));
+    int endTime = convertToNanoseconds(DateTime.now());
+
+    // URL del endpoint
+    String url =
+        'https://www.googleapis.com/fitness/v1/users/me/dataSources/derived:com.google.heart_rate.bpm:com.google.android.gms:resting_heart_rate<-merge_heart_rate_bpm/datasets/$startTime-$endTime';
+    var token = client?.credentials.accessToken.data.toString();
+
+    // Encabezados de la solicitud
+    Map<String, String> headers = {'Authorization': "Bearer $token"};
+
+    // Realiza la solicitud GET
+    try {
+      http.Response response = await http.get(Uri.parse(url), headers: headers);
+
+      if (response.statusCode == 200) {
+      } else {}
+    } catch (e) {
+      print('Excepción durante la solicitud: $e');
+    }
+  }
+
+  Future<void> getCaloriesExpended(auth.AuthClient? client) async {
+    int startTime = convertToNanoseconds(DateTime(2024, 3, 22, 0, 0));
+    int endTime = convertToNanoseconds(DateTime.now());
+    // URL del endpoint
+    String url =
+        'https://www.googleapis.com/fitness/v1/users/me/dataSources/derived:com.google.calories.expended:com.google.android.gms:merge_calories_expended/datasets/$startTime-$endTime';
+    var token = client?.credentials.accessToken.data.toString();
+
+    // Encabezados de la solicitud
+    Map<String, String> headers = {'Authorization': "Bearer $token"};
+
+    // Realiza la solicitud GET
+    try {
+      http.Response response = await http.get(Uri.parse(url), headers: headers);
+
+      if (response.statusCode == 200) {
+      } else {}
+    } catch (e) {
+      print('Excepción durante la solicitud: $e');
+    }
+  }
+
+  Future<void> getOxygenSaturation(auth.AuthClient? client) async {
+    int startTime = convertToNanoseconds(DateTime(2024, 3, 22, 0, 0));
+    int endTime = convertToNanoseconds(DateTime.now());
+    // URL del endpoint
+    String url = 'PENDIENTE';
+    var token = client?.credentials.accessToken.data.toString();
+
+    // Encabezados de la solicitud
+    Map<String, String> headers = {'Authorization': "Bearer $token"};
+
+    // Realiza la solicitud GET
+    try {
+      http.Response response = await http.get(Uri.parse(url), headers: headers);
+
+      if (response.statusCode == 200) {
+      } else {}
+    } catch (e) {
+      print('Excepción durante la solicitud: $e');
+    }
+  }
+
+  Future<void> getSleep(auth.AuthClient? client) async {
+    int startTime = convertToNanoseconds(DateTime(2024, 3, 22, 0, 0));
+    int endTime = convertToNanoseconds(DateTime.now());
+    // URL del endpoint
+    String url = 'PENDIENTE';
+    var token = client?.credentials.accessToken.data.toString();
+
+    // Encabezados de la solicitud
+    Map<String, String> headers = {'Authorization': "Bearer $token"};
+
+    // Realiza la solicitud GET
+    try {
+      http.Response response = await http.get(Uri.parse(url), headers: headers);
+
+      if (response.statusCode == 200) {
+        print(response.body);
+      } else {}
+    } catch (e) {
+      print('Excepción durante la solicitud: $e');
+    }
+  }
 }
 
-/*
-// create a HealthFactory for use in the app, choose if HealthConnect should be used or not
-    final health = HealthFactory(useHealthConnectIfAvailable: true);
+Future<void> addUser() async {
+  // Obtén una referencia a la colección en Firestore
+  var db = FirebaseFirestore.instance;
 
-    // define the types to get
-    var types = [
-      // HealthDataType.STEPS,
-      // HealthDataType.BLOOD_GLUCOSE,
-      HealthDataType.HEART_RATE,
-    ];
+  await db.collection("users").add({
+    "authType": 'mail',
+    'hash': '',
+    'id_monitored_individuals': [],
+    'mail': 'hernanReyesMed@gmail.com',
+    'nickName': 'Storm'
+  });
 
-    // requesting access to the data types before reading them
-    bool requested = await health.requestAuthorization(types);
+  // Añade un nuevo documento a la colección
+  // datos.add({
+  //   'authType': 'mail',
+  //   'hash': '',
+  //   'id_monitored_individuals': [],
+  //   'mail': 'hernanReyesMed@gmail.com',
+  //   'nickName': 'Storm'
+  //   // Agrega otros campos y valores según sea necesario
+  // }).then((value) {
+  //   print('Datos agregados con éxito: $value');
+  // }).catchError((error) {
+  //   print('Error al agregar datos: $error');
+  // });
+}
 
-    var now = DateTime.now();
-
-    // fetch health data from the last 24 hours
-    List<HealthDataPoint> healthData = await health.getHealthDataFromTypes(
-        now.subtract(Duration(days: 1)), now, types);
-
-    // request permissions to write steps and blood glucose
-    types = [HealthDataType.STEPS, HealthDataType.BLOOD_GLUCOSE];
-    var permissions = [
-      HealthDataAccess.READ_WRITE,
-      HealthDataAccess.READ_WRITE
-    ];
-    await health.requestAuthorization(types, permissions: permissions);
-
-    // write steps and blood glucose
-    bool success =
-        await health.writeHealthData(10, HealthDataType.STEPS, now, now);
-    success = await health.writeHealthData(
-        3.1, HealthDataType.BLOOD_GLUCOSE, now, now);
-
-    // get the number of steps for today
-    var midnight = DateTime(now.year, now.month, now.day);
-    int? steps = await health.getTotalStepsInInterval(midnight, now);
-    print('========================');
-    print(healthData);
-
- */
+int convertToNanoseconds(DateTime fecha) {
+  int result = fecha.microsecondsSinceEpoch * 1000;
+  return result;
+}
