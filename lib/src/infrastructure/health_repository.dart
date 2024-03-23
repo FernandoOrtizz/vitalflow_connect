@@ -4,8 +4,11 @@ import 'package:googleapis_auth/googleapis_auth.dart' as auth show AuthClient;
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'dart:convert';
 
 class HealthRepository {
+  var db = FirebaseFirestore.instance;
+
   int startTime = convertToNanoseconds(DateTime(2024, 3, 22, 0, 0));
   int endTime = convertToNanoseconds(DateTime.now());
 
@@ -31,8 +34,6 @@ class HealthRepository {
     await getCaloriesExpended(client);
     // getOxygenSaturation(client);
     // getSleep(client);
-
-    addUser();
 
     return true;
   }
@@ -77,7 +78,11 @@ class HealthRepository {
       http.Response response = await http.get(Uri.parse(url), headers: headers);
 
       if (response.statusCode == 200) {
-        print(response.body);
+        Map<String, dynamic> responseToMap = jsonDecode(response.body);
+
+        Map<String, dynamic> mapSerialized = extractLastPoint(responseToMap);
+
+        postHeartRate(mapSerialized);
       } else {}
     } catch (e) {
       print('Excepción durante la solicitud: $e');
@@ -171,36 +176,43 @@ class HealthRepository {
       print('Excepción durante la solicitud: $e');
     }
   }
+
+  Future<void> postHeartRate(Map<String, dynamic> heartRateData) async {
+    await db.collection("bpm").add(heartRateData);
+  }
+
+  Future<void> addUser() async {
+    await db.collection("users").add({
+      "authType": 'mail',
+      'hash': '',
+      'id_monitored_individuals': [],
+      'mail': 'hernanReyesMed@gmail.com',
+      'nickName': 'Storm'
+    });
+  }
 }
 
-Future<void> addUser() async {
-  // Obtén una referencia a la colección en Firestore
-  var db = FirebaseFirestore.instance;
+Map<String, dynamic> extractLastPoint(Map<String, dynamic> responseSerialized) {
+  List<dynamic> point = responseSerialized['point'];
+  Map<String, dynamic> lastPoint = point.last;
 
-  await db.collection("users").add({
-    "authType": 'mail',
-    'hash': '',
-    'id_monitored_individuals': [],
-    'mail': 'hernanReyesMed@gmail.com',
-    'nickName': 'Storm'
-  });
+  var date = decodeMiliseconds(int.parse(lastPoint['modifiedTimeMillis']));
 
-  // Añade un nuevo documento a la colección
-  // datos.add({
-  //   'authType': 'mail',
-  //   'hash': '',
-  //   'id_monitored_individuals': [],
-  //   'mail': 'hernanReyesMed@gmail.com',
-  //   'nickName': 'Storm'
-  //   // Agrega otros campos y valores según sea necesario
-  // }).then((value) {
-  //   print('Datos agregados con éxito: $value');
-  // }).catchError((error) {
-  //   print('Error al agregar datos: $error');
-  // });
+  Map<String, dynamic> extractedData = {
+    'value': lastPoint['value'][0]['fpVal'],
+    'modifiedTimeMillis': lastPoint['modifiedTimeMillis'],
+    'date': date,
+    'user_id': ''
+  };
+
+  return extractedData;
 }
 
 int convertToNanoseconds(DateTime fecha) {
   int result = fecha.microsecondsSinceEpoch * 1000;
   return result;
+}
+
+DateTime decodeMiliseconds(int miliseconds) {
+  return DateTime.fromMillisecondsSinceEpoch(miliseconds);
 }

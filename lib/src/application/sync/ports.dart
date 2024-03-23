@@ -1,7 +1,7 @@
 abstract class Source {
-  Future<List<dynamic>> getData();
+  Future<Map<String, dynamic>> getData();
 }
 
 abstract class Destination {
-  Future<void> saveData(List<dynamic> data);
+  Future<void> saveData(Map<String, dynamic> data);
 }

@@ -6,15 +6,15 @@ class BloodPreassure implements Source {
 
   BloodPreassure({required this.request});
 
-  Future<List<dynamic>> getData() async {
+  Future<Map<String, dynamic>> getData() async {
     try {
-      List<dynamic> data = await request.get('');
+      Map<String, dynamic> data = await request.get('');
 
       return data;
     } catch (e) {
       print('Error: $e');
     }
 
-    return [];
+    return {};
   }
 }

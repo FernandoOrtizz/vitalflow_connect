@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vitalflow_connect/src/application/sync/ports.dart';
 
-class HeartRate implements Destination {
+class RestingHeartRate implements Destination {
   @override
   Future<void> saveData(Map<String, dynamic> data) async {
     try {
-      // Save data to Firebase
-      await FirebaseFirestore.instance.collection("bpm").add(data);
+      await FirebaseFirestore.instance.collection("resting_bpm").add(data);
       return Future.value();
     } catch (e) {
       return Future.error(e);
@@ -17,7 +16,7 @@ class HeartRate implements Destination {
     Map<String, dynamic> data = {};
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection("bpm")
+          .collection("resting_bpm")
           .orderBy("date", descending: true) // Ordenar por fecha descendente
           .limit(1)
           .get();
@@ -34,7 +33,7 @@ class HeartRate implements Destination {
 
       return data["value"];
     } catch (e) {
-      throw Exception('Could not get heart rate from Google Fit. $e');
+      throw Exception('Could not get resting heart rate from Google Fit. $e');
     }
   }
 }
