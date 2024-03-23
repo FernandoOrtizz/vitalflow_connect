@@ -42,7 +42,7 @@ class CardWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 2),
             Row(
               children: [
                 Text(
@@ -61,7 +61,7 @@ class CardWidget extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 2),
             Text(
               date,
               style: const TextStyle(

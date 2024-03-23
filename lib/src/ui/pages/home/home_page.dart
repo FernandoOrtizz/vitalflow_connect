@@ -30,12 +30,20 @@ class _HomePageState extends State<HomePage> {
           childAspectRatio: 1.0, // Relación de aspecto de 2:1
           children: [
             CardWidget(
-              title: 'Latidos Por Minuto',
-              iconData: Icons.monitor_heart_outlined,
+              title: 'Ritmo Cardiaco',
+              iconData: Icons.favorite_border_rounded,
               value: '116',
               date: '2024-03-07',
               unit: 'LPM',
               iconColor: Colors.green.shade700,
+            ),
+            CardWidget(
+              title: 'Ritmo cardiaco en reposo',
+              iconData: Icons.favorite_border_rounded,
+              value: '80',
+              date: '2024-03-07',
+              unit: 'LPM',
+              iconColor: Colors.pink.shade100,
             ),
             CardWidget(
               title: 'Sueño',
@@ -62,20 +70,12 @@ class _HomePageState extends State<HomePage> {
               iconColor: Colors.green.shade300,
             ),
             CardWidget(
-              title: 'Estrés',
-              iconData: Icons.face_retouching_natural_sharp,
+              title: 'Energía gastada',
+              iconData: Icons.fireplace_rounded,
               value: '46',
               date: '2024-03-07',
-              unit: '%',
+              unit: 'Cals',
               iconColor: Colors.orange.shade300,
-            ),
-            CardWidget(
-              title: 'Presión Sanguínea',
-              iconData: Icons.favorite_border,
-              value: '120/80',
-              date: '2024-03-07',
-              unit: 'mmHg',
-              iconColor: Colors.pink.shade100,
             ),
           ],
         ),
