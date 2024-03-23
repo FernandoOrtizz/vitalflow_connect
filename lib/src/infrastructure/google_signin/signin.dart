@@ -1,33 +1,37 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:googleapis/fitness/v1.dart';
-import 'package:googleapis_auth/googleapis_auth.dart' as auth show AuthClient;
+import 'package:flutter/material.dart';
 
 abstract class GoogleAuthService {
-  Future<void> signIn();
+  login();
   Future<void> refreshAccessToken();
 }
 
-class GoogleAuth implements GoogleAuthService {
+class GoogleAuth with ChangeNotifier implements GoogleAuthService {
   String? _accessToken;
   String? get accessToken => _accessToken;
 
   String? _refreshToken;
   String? get refreshToken => _refreshToken;
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: <String>[
-      FitnessApi.fitnessActivityReadScope,
-      FitnessApi.fitnessBloodPressureReadScope,
-      FitnessApi.fitnessHeartRateReadScope,
-      FitnessApi.fitnessSleepReadScope,
-      FitnessApi.fitnessOxygenSaturationReadScope
-    ],
-  );
+  UserCredential? _currentUser;
+  UserCredential? get currentUser => _currentUser;
 
-  Future<void> signIn() async {
+  @override
+  Future<void> login() async {
+    GoogleSignIn googleSignIn = GoogleSignIn(
+      scopes: <String>[
+        FitnessApi.fitnessActivityReadScope,
+        FitnessApi.fitnessBloodPressureReadScope,
+        FitnessApi.fitnessHeartRateReadScope,
+        FitnessApi.fitnessSleepReadScope,
+        FitnessApi.fitnessOxygenSaturationReadScope
+      ],
+    );
+
     final GoogleSignInAccount? googleSignInAccount =
-        await _googleSignIn.signIn();
+        await googleSignIn.signIn();
 
     if (googleSignInAccount == null) {
       throw Exception('Google Sign In failed');
@@ -38,6 +42,13 @@ class GoogleAuth implements GoogleAuthService {
 
     _accessToken = googleSignInAuthentication.accessToken;
     _refreshToken = googleSignInAuthentication.idToken;
+
+    AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: _accessToken, idToken: googleSignInAuthentication.idToken);
+
+    _currentUser = await FirebaseAuth.instance.signInWithCredential(credential);
+
+    return Future.value();
   }
 
   Future<void> refreshAccessToken() async {}

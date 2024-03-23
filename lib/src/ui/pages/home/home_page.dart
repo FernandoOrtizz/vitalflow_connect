@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vitalflow_connect/src/infrastructure/firestore/heart_rate.dart';
+import 'package:vitalflow_connect/src/infrastructure/firestore/resting_heart_rate.dart';
+import 'package:vitalflow_connect/src/infrastructure/google_signin/signin.dart';
 import 'package:vitalflow_connect/src/ui/pages/history/history_page.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/home_controller.dart';
 import 'package:vitalflow_connect/src/ui/widgets/bottom_menu.dart';
@@ -13,10 +17,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final controller = HomeController();
-
+  var heartRateData = HeartRate();
+  var restingHeartRateData = RestingHeartRate();
   @override
   Widget build(BuildContext context) {
+    final controller =
+        HomeController(googleAuthService: context.watch<GoogleAuth>());
     return Scaffold(
       appBar: CustomAppBar(),
       floatingActionButton: FloatingActionButton(
@@ -32,7 +38,7 @@ class _HomePageState extends State<HomePage> {
             CardWidget(
               title: 'Ritmo Cardiaco',
               iconData: Icons.favorite_border_rounded,
-              value: '116',
+              value: heartRateData.getData(), //
               date: '2024-03-07',
               unit: 'LPM',
               iconColor: Colors.green.shade700,
@@ -40,10 +46,26 @@ class _HomePageState extends State<HomePage> {
             CardWidget(
               title: 'Ritmo cardiaco en reposo',
               iconData: Icons.favorite_border_rounded,
-              value: '80',
+              value: '', //restingHeartRateData.getData(),
               date: '2024-03-07',
               unit: 'LPM',
               iconColor: Colors.pink.shade100,
+            ),
+            CardWidget(
+              title: 'Pasos',
+              iconData: Icons.directions_walk_rounded,
+              value: '',
+              date: '2024-03-07',
+              unit: '',
+              iconColor: Colors.green.shade300,
+            ),
+            CardWidget(
+              title: 'Energía gastada',
+              iconData: Icons.fireplace_rounded,
+              value: '46',
+              date: '2024-03-07',
+              unit: 'Cals',
+              iconColor: Colors.orange.shade300,
             ),
             CardWidget(
               title: 'Sueño',
@@ -60,22 +82,6 @@ class _HomePageState extends State<HomePage> {
               date: '2024-03-07',
               unit: '%',
               iconColor: Colors.blue.shade300,
-            ),
-            CardWidget(
-              title: 'Pasos',
-              iconData: Icons.directions_walk_rounded,
-              value: '1094',
-              date: '2024-03-07',
-              unit: '',
-              iconColor: Colors.green.shade300,
-            ),
-            CardWidget(
-              title: 'Energía gastada',
-              iconData: Icons.fireplace_rounded,
-              value: '46',
-              date: '2024-03-07',
-              unit: 'Cals',
-              iconColor: Colors.orange.shade300,
             ),
           ],
         ),

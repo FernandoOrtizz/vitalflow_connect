@@ -7,8 +7,8 @@ class Runner {
 
   Future<void> execute() async {
     try {
-      for (var sync in list) {
-        await sync.sync();
+      for (var item in list) {
+        await item.sync();
       }
     } catch (e) {
       print('Error: $e');

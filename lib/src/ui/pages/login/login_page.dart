@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/home_page.dart';
+import 'package:vitalflow_connect/src/infrastructure/google_signin/signin.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, required this.controller}) : super(key: key);
@@ -13,6 +15,8 @@ class LoginPage extends StatefulWidget {
 class _LoginScreenState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
+
+  _LoginScreenState();
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +122,9 @@ class _LoginScreenState extends State<LoginPage> {
                     width: 329,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        await context.read<GoogleAuth>().login();
+
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(

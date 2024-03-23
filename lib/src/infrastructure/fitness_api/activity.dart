@@ -6,9 +6,10 @@ class Activity implements Source {
 
   Activity({required this.request});
 
-  Future<List<dynamic>> getData() async {
+  @override
+  Future<Map<String, dynamic>> getData() async {
     try {
-      List<dynamic> data = await request.get(
+      Map<String, dynamic> data = await request.get(
           'https://www.googleapis.com/fitness/v1/users/me/dataSources/derived:com.google.step_count.delta:com.google.android.gms:estimated_steps/datasets');
 
       return data;
@@ -16,6 +17,6 @@ class Activity implements Source {
       print('Error: $e');
     }
 
-    return [];
+    return {};
   }
 }

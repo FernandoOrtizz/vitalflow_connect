@@ -10,9 +10,13 @@ class SyncUseCase implements Sync {
   Future<void> sync() async {
     try {
       var data = await _source.getData();
+      if (data.isEmpty) {
+        return;
+      }
+
       await _destination.saveData(data);
     } catch (e) {
-      print('Error: $e');
+      throw Exception('Error: $e');
     }
   }
 }
