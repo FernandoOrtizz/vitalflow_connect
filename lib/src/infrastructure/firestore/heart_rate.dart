@@ -13,11 +13,12 @@ class HeartRate implements Destination {
     }
   }
 
-  Future<String> getData() async {
+  Future<Map<String, dynamic>> getData(String email) async {
     Map<String, dynamic> data = {};
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("bpm")
+          // .where("userEmail", isEqualTo: email)
           .orderBy("date", descending: true) // Ordenar por fecha descendente
           .limit(1)
           .get();
@@ -32,7 +33,7 @@ class HeartRate implements Destination {
         print('No hay registros de pasos.');
       }
 
-      return data["value"];
+      return data;
     } catch (e) {
       throw Exception('Could not get heart rate from Google Fit. $e');
     }

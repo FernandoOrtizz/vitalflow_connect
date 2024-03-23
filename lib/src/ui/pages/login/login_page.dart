@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vitalflow_connect/src/infrastructure/firestore/monitoring_permission.dart';
+import 'package:vitalflow_connect/src/provider/user.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/home_page.dart';
 import 'package:vitalflow_connect/src/infrastructure/google_signin/signin.dart';
+import 'package:vitalflow_connect/src/infrastructure/firestore/monitoring_permission.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, required this.controller}) : super(key: key);
@@ -124,6 +128,12 @@ class _LoginScreenState extends State<LoginPage> {
                     child: ElevatedButton(
                       onPressed: () async {
                         await context.read<GoogleAuth>().login();
+                        context.read<CurrentUser>().email =
+                            FirebaseAuth.instance.currentUser!.email ?? "";
+
+                        context.read<CurrentUser>().allowedUsersToMonitor =
+                            await MonitoringPermission().getUserPermissions(
+                                context.read<CurrentUser>().email);
 
                         Navigator.pushReplacement(
                             context,

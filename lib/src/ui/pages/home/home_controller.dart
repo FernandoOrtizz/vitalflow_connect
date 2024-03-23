@@ -1,6 +1,7 @@
 import 'package:vitalflow_connect/src/application/runner/ports.dart';
 import 'package:vitalflow_connect/src/application/runner/usecase.dart';
 import 'package:vitalflow_connect/src/application/sync/usecase.dart';
+import 'package:vitalflow_connect/src/infrastructure/firestore/monitoring_permission.dart';
 import 'package:vitalflow_connect/src/infrastructure/fitness_api/activity.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/activity.dart'
     as activityDestination;

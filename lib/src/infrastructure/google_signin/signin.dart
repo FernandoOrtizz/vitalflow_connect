@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 abstract class GoogleAuthService {
   login();
-  Future<void> refreshAccessToken();
+  Future<void> silentSignIn();
 }
 
 class GoogleAuth with ChangeNotifier implements GoogleAuthService {
@@ -49,6 +49,36 @@ class GoogleAuth with ChangeNotifier implements GoogleAuthService {
     _currentUser = await FirebaseAuth.instance.signInWithCredential(credential);
 
     return Future.value();
+  }
+
+  @override
+  Future<void> silentSignIn() async {
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser =
+          await googleSignIn.signInSilently(); // silent login
+      if (googleUser != null) {
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        _accessToken = googleAuth.accessToken;
+        _refreshToken = googleAuth.idToken;
+
+        _currentUser =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+        throw Exception('User silently signed in with Google.');
+      } else {
+        throw Exception('No user signed in silently.');
+        // Optionally, redirect to a sign-in page
+      }
+    } catch (e) {
+      print(e);
+      // Handle errors or redirect to a manual sign-in page
+    }
   }
 
   Future<void> refreshAccessToken() async {}

@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'ports.dart';
 import 'package:vitalflow_connect/src/application/runner/ports.dart';
 
@@ -11,6 +13,12 @@ class SyncUseCase implements Sync {
     try {
       var data = await _source.getData();
       if (data.isEmpty) {
+        return;
+      }
+
+      var duplicatedData = await _destination
+          .getData(FirebaseAuth.instance.currentUser?.email ?? '');
+      if (duplicatedData.isNotEmpty) {
         return;
       }
 

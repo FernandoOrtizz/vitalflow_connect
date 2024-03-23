@@ -3,23 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:vitalflow_connect/firebase_options.dart';
 import 'package:vitalflow_connect/src/infrastructure/google_signin/signin.dart';
-
-import 'package:vitalflow_connect/src/application/runner/ports.dart';
-import 'package:vitalflow_connect/src/application/runner/usecase.dart';
-import 'package:vitalflow_connect/src/application/sync/usecase.dart';
-import 'package:vitalflow_connect/src/infrastructure/fitness_api/activity.dart';
-import 'package:vitalflow_connect/src/infrastructure/firestore/activity.dart'
-    as activityDestination;
-import 'package:vitalflow_connect/src/infrastructure/firestore/heart_rate.dart'
-    as heartRateDestination;
-import 'package:vitalflow_connect/src/infrastructure/firestore/resting_heart_rate.dart'
-    as restingHeartRateDestination;
-import 'package:vitalflow_connect/src/infrastructure/firestore/calories_expended.dart'
-    as caloriesExpendedDestination;
-import 'package:vitalflow_connect/src/infrastructure/fitness_api/calories_expanded.dart';
-import 'package:vitalflow_connect/src/infrastructure/fitness_api/heart_rate.dart';
-import 'package:vitalflow_connect/src/infrastructure/fitness_api/request.dart';
-import 'package:vitalflow_connect/src/infrastructure/fitness_api/resting_heart_rate.dart';
+import 'package:vitalflow_connect/src/provider/user.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/home_page.dart';
 import 'package:vitalflow_connect/src/ui/pages/login/login_page.dart';
 import 'package:provider/provider.dart';
@@ -30,8 +14,13 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(ChangeNotifierProvider(
-      create: (_) => GoogleAuth(), child: const MyApp()));
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => GoogleAuth()),
+      ChangeNotifierProvider(create: (_) => CurrentUser()),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

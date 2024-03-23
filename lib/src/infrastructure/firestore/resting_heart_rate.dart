@@ -12,11 +12,12 @@ class RestingHeartRate implements Destination {
     }
   }
 
-  Future<String> getData() async {
+  Future<Map<String, dynamic>> getData(String email) async {
     Map<String, dynamic> data = {};
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("resting_bpm")
+          .where("userEmail", isEqualTo: email)
           .orderBy("date", descending: true) // Ordenar por fecha descendente
           .limit(1)
           .get();
@@ -25,13 +26,13 @@ class RestingHeartRate implements Destination {
         var doc = querySnapshot.docs.first;
         // Acceder a los datos del documento
         data = doc.data() as Map<String, dynamic>;
-        print('Registro más reciente de pasos:');
+        print('Registro más reciente de LPM:');
         print(data);
       } else {
         print('No hay registros de pasos.');
       }
 
-      return data["value"];
+      return data;
     } catch (e) {
       throw Exception('Could not get resting heart rate from Google Fit. $e');
     }

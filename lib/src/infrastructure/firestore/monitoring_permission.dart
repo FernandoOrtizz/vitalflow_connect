@@ -4,33 +4,49 @@ import 'package:firebase_auth/firebase_auth.dart';
 class MonitoringPermission {
   final String collection = "monitoring_permissions";
 
-  Future<Map<String, dynamic>> getAvailableUserPermissions() async {
-    final user = FirebaseAuth.instance.currentUser;
-    var querySnapshot = await FirebaseFirestore.instance
-        .collection(collection)
-        .orderBy("date", descending: true) // Ordenar por fecha descendente
-        .limit(1)
-        .get();
+  Future<List<Map<String, dynamic>>> getUserPermissions(String email) async {
+    try {
+      CollectionReference users =
+          FirebaseFirestore.instance.collection('monitoring_permissions');
 
-    if (querySnapshot.docs.isEmpty) {
-      return {};
+      QuerySnapshot querySnapshot =
+          await users.where('user_id', isEqualTo: email).get();
+
+      List<Map<String, dynamic>> permissions = [];
+
+      for (var doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        permissions.addAll(data['monitoring_permissions'] ?? []);
+      }
+
+      return permissions;
+    } catch (e) {
+      print('Error al obtener los datos: $e');
+      return [];
     }
-
-    return querySnapshot.docs.first.data();
   }
 
-  Future<bool> hasPermission() async {
-    final user = FirebaseAuth.instance.currentUser;
-    var querySnapshot = await FirebaseFirestore.instance
-        .collection(collection)
-        .orderBy("date", descending: true) // Ordenar por fecha descendente
-        .limit(1)
-        .get();
+  Future<void> postUserPermissions(String email) async {
+    try {
+      CollectionReference users =
+          FirebaseFirestore.instance.collection('monitoring_permissions');
 
-    if (querySnapshot.docs.isEmpty) {
-      return false;
+      Map<String, dynamic> data = {
+        'monitoring_permissions': [
+          {
+            'mail': FirebaseAuth.instance.currentUser?.email,
+            'name': FirebaseAuth.instance.currentUser?.displayName,
+          }
+        ],
+        'user_id': email,
+      };
+
+      // Agregar los datos a Firestore
+      await users.add(data);
+
+      print('Datos agregados exitosamente.');
+    } catch (e) {
+      print('Error al agregar los datos: $e');
     }
-
-    return false;
   }
 }
