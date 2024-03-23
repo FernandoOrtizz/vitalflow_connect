@@ -17,7 +17,7 @@ class RestingHeartRate implements Destination {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("resting_bpm")
-          .where("userEmail", isEqualTo: email)
+          // .where("userEmail", isEqualTo: email)
           .orderBy("date", descending: true) // Ordenar por fecha descendente
           .limit(1)
           .get();

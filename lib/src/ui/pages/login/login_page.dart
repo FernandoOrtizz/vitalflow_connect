@@ -135,6 +135,7 @@ class _LoginScreenState extends State<LoginPage> {
                             await MonitoringPermission().getUserPermissions(
                                 context.read<CurrentUser>().email);
 
+                        if (!context.mounted) return;
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(

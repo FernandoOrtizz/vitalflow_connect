@@ -4,7 +4,7 @@ class CardWidget extends StatelessWidget {
   final String title;
   final IconData iconData;
   final String value;
-  final String date;
+  final DateTime date;
   final String unit;
   final Color iconColor;
 
@@ -31,10 +31,9 @@ class CardWidget extends StatelessWidget {
           children: [
             Icon(
               iconData,
-              size: 48,
+              size: 40,
               color: iconColor,
             ),
-            const SizedBox(height: 8),
             Text(
               title,
               style: const TextStyle(
@@ -42,7 +41,6 @@ class CardWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 2),
             Row(
               children: [
                 Text(
@@ -61,9 +59,8 @@ class CardWidget extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 2),
             Text(
-              date,
+              date.toString(),
               style: const TextStyle(
                 fontSize: 12,
                 color: Colors.grey,

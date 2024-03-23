@@ -19,7 +19,7 @@ class CaloriesExpended implements Destination {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("calories_expended")
-          .where("userEmail", isEqualTo: email)
+          // .where("userEmail", isEqualTo: email)
           .orderBy("date", descending: true) // Ordenar por fecha descendente
           .limit(1)
           .get();
