@@ -12,11 +12,15 @@ class Activity implements Destination {
     }
   }
 
-  Future<String> getData() async {
+  Future<Map<String, dynamic>> getData(String email) async {
+    print(email);
+    print('===============================');
+
     Map<String, dynamic> data = {};
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("steps")
+          .where("userEmail", isEqualTo: 'fernandomanzanares1999@gmail.com')
           .orderBy("date", descending: true) // Ordenar por fecha descendente
           .limit(1)
           .get();
@@ -31,7 +35,7 @@ class Activity implements Destination {
         print('No hay registros de pasos.');
       }
 
-      return data["value"];
+      return data;
     } catch (e) {
       throw Exception('Could not get steps from Google Fit. $e');
     }

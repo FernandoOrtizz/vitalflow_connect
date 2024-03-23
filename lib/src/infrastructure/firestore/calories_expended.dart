@@ -14,11 +14,12 @@ class CaloriesExpended implements Destination {
     }
   }
 
-  Future<String> getData() async {
+  Future<Map<String, dynamic>> getData(String email) async {
     Map<String, dynamic> data = {};
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("calories_expended")
+          .where("userEmail", isEqualTo: email)
           .orderBy("date", descending: true) // Ordenar por fecha descendente
           .limit(1)
           .get();
@@ -33,7 +34,7 @@ class CaloriesExpended implements Destination {
         print('No hay registros de pasos.');
       }
 
-      return data["value"];
+      return data;
     } catch (e) {
       throw Exception('Could not get calories_expended from Google Fit. $e');
     }

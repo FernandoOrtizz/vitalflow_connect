@@ -4,4 +4,5 @@ abstract class Source {
 
 abstract class Destination {
   Future<void> saveData(Map<String, dynamic> data);
+  Future<Map<String, dynamic>> getData(String email);
 }
