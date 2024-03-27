@@ -31,13 +31,13 @@ class CardWidget extends StatelessWidget {
           children: [
             Icon(
               iconData,
-              size: 40,
+              size: 34,
               color: iconColor,
             ),
             Text(
               title,
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -46,7 +46,7 @@ class CardWidget extends StatelessWidget {
                 Text(
                   value,
                   style: const TextStyle(
-                    fontSize: 24,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

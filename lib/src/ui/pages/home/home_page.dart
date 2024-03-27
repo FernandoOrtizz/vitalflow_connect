@@ -28,7 +28,11 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: CustomAppBar(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => controller.getData(),
+        onPressed: () => {
+          controller.getData(),
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const HomePage()))
+        },
         child: const Icon(Icons.refresh),
       ),
       body: Padding(
