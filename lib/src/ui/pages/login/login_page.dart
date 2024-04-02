@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/button_list.dart';
+import 'package:flutter_signin_button/button_view.dart';
 import 'package:provider/provider.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/monitoring_permission.dart';
 import 'package:vitalflow_connect/src/provider/user.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/home_page.dart';
 import 'package:vitalflow_connect/src/infrastructure/google_signin/signin.dart';
-import 'package:vitalflow_connect/src/infrastructure/firestore/monitoring_permission.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, required this.controller}) : super(key: key);
@@ -36,86 +37,23 @@ class _LoginScreenState extends State<LoginPage> {
                 const SizedBox(
                   height: 18,
                 ),
-                const Text(
-                  'VitalFlow Connect',
-                  style: TextStyle(
-                    color: Color(0xFF755DC1),
-                    fontSize: 27,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w500,
+                const Center(
+                  child: Row(
+                    children: [
+                      Text(
+                        'VitalFlow Connect login',
+                        style: TextStyle(
+                          color: Color(0xFF755DC1),
+                          fontSize: 27,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(
                   height: 50,
-                ),
-                TextField(
-                  controller: _emailController,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Color(0xFF393939),
-                    fontSize: 13,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: 'Correo',
-                    labelStyle: TextStyle(
-                      color: Color(0xFF755DC1),
-                      fontSize: 15,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(
-                        width: 1,
-                        color: Color(0xFF837E93),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(
-                        width: 1,
-                        color: Color(0xFF9F7BFF),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                TextField(
-                  controller: _passController,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Color(0xFF393939),
-                    fontSize: 13,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: 'Contraseña',
-                    labelStyle: TextStyle(
-                      color: Color(0xFF755DC1),
-                      fontSize: 15,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(
-                        width: 1,
-                        color: Color(0xFF837E93),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(
-                        width: 1,
-                        color: Color(0xFF9F7BFF),
-                      ),
-                    ),
-                  ),
                 ),
                 const SizedBox(
                   height: 25,
@@ -123,73 +61,30 @@ class _LoginScreenState extends State<LoginPage> {
                 ClipRRect(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                   child: SizedBox(
-                    width: 329,
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        await context.read<GoogleAuth>().login();
-                        context.read<CurrentUser>().email =
-                            FirebaseAuth.instance.currentUser!.email ?? "";
+                      width: 329,
+                      height: 56,
+                      child: SignInButton(
+                        Buttons.Google,
+                        text: "Inicia sesión con Google",
+                        onPressed: () async {
+                          await context.read<GoogleAuth>().login();
+                          context.read<CurrentUser>().email =
+                              FirebaseAuth.instance.currentUser!.email ?? "";
 
-                        context.read<CurrentUser>().allowedUsersToMonitor =
-                            await MonitoringPermission().getUserPermissions(
-                                context.read<CurrentUser>().email);
+                          context.read<CurrentUser>().allowedUsersToMonitor =
+                              await MonitoringPermission().getUserPermissions(
+                                  context.read<CurrentUser>().email);
 
-                        if (!context.mounted) return;
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const HomePage()));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF9F7BFF),
-                      ),
-                      child: const Text(
-                        'Iniciar sesión',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
+                          if (!context.mounted) return;
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomePage()));
+                        },
+                      )),
                 ),
                 const SizedBox(
                   height: 15,
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      '¿No tienes una cuenta?',
-                      style: TextStyle(
-                        color: Color(0xFF837E93),
-                        fontSize: 13,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 2.5,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        widget.controller.animateToPage(1,
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.ease);
-                      },
-                      child: const Text(
-                        'Regístrate',
-                        style: TextStyle(
-                          color: Color(0xFF755DC1),
-                          fontSize: 13,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
                 const SizedBox(
                   height: 15,
