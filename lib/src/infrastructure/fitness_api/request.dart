@@ -27,6 +27,8 @@ class Request {
       http.Response response = await http
           .get(Uri.parse('$url/$startTime-$endTime'), headers: headers);
 
+      print('$url/$startTime-$endTime');
+
       if (response.statusCode != 200) {
         Map<String, dynamic> body = jsonDecode(response.body);
         throw Exception(

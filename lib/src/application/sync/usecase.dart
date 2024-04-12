@@ -11,18 +11,20 @@ class SyncUseCase implements Sync {
 
   Future<void> sync() async {
     try {
-      var data = await _source.getData();
-      if (data.isEmpty) {
+      var dataSource = await _source.getData();
+      if (dataSource.isEmpty) {
         return;
       }
 
-      var duplicatedData = await _destination
+      var dataDestination = await _destination
           .getData(FirebaseAuth.instance.currentUser?.email ?? '');
-      if (duplicatedData.isNotEmpty) {
+      if (dataDestination["modifiedTimeMillis"] ==
+          dataSource["modifiedTimeMillis"]) {
+        print("Duplicated data");
         return;
       }
 
-      await _destination.saveData(data);
+      await _destination.saveData(dataSource);
     } catch (e) {
       throw Exception('Error: $e');
     }
