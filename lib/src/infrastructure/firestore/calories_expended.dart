@@ -28,7 +28,7 @@ class CaloriesExpended implements Destination {
         var doc = querySnapshot.docs.first;
         // Acceder a los datos del documento
         data = doc.data() as Map<String, dynamic>;
-        print('Registro más reciente de pasos:');
+        print('Registro más reciente de calorías:');
         print(data);
       } else {
         print('No hay registros de pasos.');

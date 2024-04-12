@@ -16,9 +16,6 @@ class MonitoringPermission {
 
       for (var doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        print(
-            '01237777777777777777777777777777777777777777777777777777777777777777777777777');
-        print(data);
         permissions.addAll(data['monitoring_permissions'] ?? []);
       }
 
