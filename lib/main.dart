@@ -2,11 +2,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:vitalflow_connect/firebase_options.dart';
+import 'package:vitalflow_connect/src/application/report/ports.dart';
+import 'package:vitalflow_connect/src/application/report/usecase.dart';
+import 'package:vitalflow_connect/src/infrastructure/firestore/activity.dart';
+import 'package:vitalflow_connect/src/infrastructure/firestore/monitoring_permission.dart';
 import 'package:vitalflow_connect/src/infrastructure/google_signin/signin.dart';
 import 'package:vitalflow_connect/src/provider/user.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/home_page.dart';
 import 'package:vitalflow_connect/src/ui/pages/login/login_page.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,10 +19,15 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  initializeDateFormatting('es', null);
+
+  var monitoringPermissions = await MonitoringPermission()
+      .getUserPermissions(FirebaseAuth.instance.currentUser?.email ?? '');
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => GoogleAuth()),
-      ChangeNotifierProvider(create: (_) => CurrentUser()),
+      ChangeNotifierProvider(create: (_) => CurrentUser(monitoringPermissions)),
     ],
     child: const MyApp(),
   ));

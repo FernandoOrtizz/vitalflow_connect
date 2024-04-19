@@ -24,6 +24,9 @@ class CaloriesExpended implements Destination {
           .limit(1)
           .get();
 
+      print('MONITOREANDO A:');
+      print(email);
+
       if (querySnapshot.docs.isNotEmpty) {
         var doc = querySnapshot.docs.first;
         // Acceder a los datos del documento

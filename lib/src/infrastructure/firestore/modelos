@@ -1,0 +1,22 @@
+Modelo historial (datos promediados según fechaRango)
+
+{
+    fechaRango: dateTime,
+    bpm: int,
+    restBpm: int,
+    sleep: float,
+    steps: int,
+    bloodOxygen: int,
+    caloriesExpended: float,
+}
+
+Ejemplo (hoy)
+{
+    fechaRango: 2024-04-16-00:00:00 - 2024-04-16-23:59:59 ,
+    bpm: float,
+    restBpm: float,
+    sleep: float,
+    steps: float,
+    bloodOxygen: float,
+    caloriesExpended: float,
+}
