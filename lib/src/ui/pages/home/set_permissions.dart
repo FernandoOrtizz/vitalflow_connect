@@ -16,7 +16,7 @@ class SetPermissions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: CustomAppBar(context: context),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -41,18 +41,6 @@ class SetPermissions extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomMenu(
-        currentIndex: 0,
-        onTap: (index) {
-          if (index == 1) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const HistoryPage()));
-          } else if ((index == 0)) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const HomePage()));
-          }
-        },
       ),
     );
   }

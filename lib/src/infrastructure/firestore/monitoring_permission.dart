@@ -10,16 +10,46 @@ class MonitoringPermission {
           FirebaseFirestore.instance.collection('monitoring_permissions');
 
       //filtro .where no funciona
-      QuerySnapshot querySnapshot = await users.get();
+      QuerySnapshot querySnapshot =
+          await users.where("user_id", isEqualTo: email).get();
 
       List<Map<String, dynamic>> permissions = [];
 
-      for (var doc in querySnapshot.docs) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        permissions.addAll(data['monitoring_permissions'] ?? []);
+      List<MonitoringPermissionModel> permissionsModel = querySnapshot.docs
+          .map((doc) => MonitoringPermissionModel(
+              doc["monitoring_permissions"], doc["user_id"]))
+          .toList();
+
+      // for (var doc in querySnapshot.docs) {
+      //   print("DATA");
+      //   print(doc.data().monitoring_permissions);
+
+      //   // Map<String, dynamic> data = doc.data()[" monitoring_permissions"] as Map<String, dynamic>;
+      //   permissions.addAll(data['monitoring_permissions'] ?? []);
+      // }
+
+      for (int index = 0; index < permissionsModel.length; index++) {
+        for (int i = 0;
+            i < permissionsModel[index].monitoring_permissions.length;
+            i++) {
+          print(permissionsModel[index].monitoring_permissions[i]);
+          permissions.add(permissionsModel[index].monitoring_permissions[i]);
+        }
       }
 
-      print(permissions);
+      print('Arreglo de permisos: $permissions');
+
+      // permissionsModel.map((permissionModel) => {
+      //   print("----------------");
+
+      //   permissionModel.monitoring_permissions.map((monitoringPermissionItem) {
+      //     permissions.add(monitoringPermissionItem);
+      //     print(monitoringPermissionItem);
+      //   });
+      // });
+
+      // print("PERMISOS");
+      // print(permissions);
       return permissions;
     } catch (e) {
       print('Error al obtener los datos: $e');
@@ -50,4 +80,11 @@ class MonitoringPermission {
       print('Error al agregar los datos: $e');
     }
   }
+}
+
+class MonitoringPermissionModel {
+  late String user_id;
+  late List<dynamic> monitoring_permissions;
+
+  MonitoringPermissionModel(this.monitoring_permissions, this.user_id);
 }

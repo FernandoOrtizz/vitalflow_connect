@@ -11,7 +11,6 @@ import 'package:vitalflow_connect/src/ui/pages/home/home_controller.dart';
 import 'package:vitalflow_connect/src/ui/widgets/bottom_menu.dart';
 import 'package:vitalflow_connect/src/ui/widgets/custom_appbar.dart';
 import '../../widgets/home/card_widget.dart';
-import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -23,10 +22,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    final controller =
-        HomeController(googleAuthService: context.watch<GoogleAuth>());
+    final controller = HomeController(
+        googleAuthService: context.watch<GoogleAuth>(),
+        email: context.watch<CurrentUser>().email);
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(context: context),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {
           controller.getData(),
@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Energía gastada',
             iconData: Icons.battery_charging_full_rounded,
             value: snapshot.data?["value"]?.toStringAsFixed(2) ?? '---',
-            date: snapshot.data?["date"].toDate(),
+            date: snapshot.data?["date"]?.toDate() ?? DateTime.now(),
             unit: 'Cals',
             iconColor: Colors.orange.shade300,
           );
@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Ritmo cardiaco',
             iconData: Icons.favorite,
             value: snapshot.data?["value"].toString() ?? '---',
-            date: snapshot.data?["date"].toDate(),
+            date: snapshot.data?["date"]?.toDate() ?? DateTime.now(),
             unit: 'LPM',
             iconColor: Colors.pink.shade100,
           );
@@ -178,7 +178,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Ritmo cardiaco en reposo',
             iconData: Icons.favorite_border_rounded,
             value: snapshot.data?["value"].toString() ?? '---',
-            date: snapshot.data?["date"].toDate(),
+            date: snapshot.data?["date"]?.toDate() ?? DateTime.now(),
             unit: 'LPM',
             iconColor: Colors.pink.shade100,
           );
@@ -214,7 +214,7 @@ class _HomePageState extends State<HomePage> {
             title: 'Pasos',
             iconData: Icons.directions_walk_rounded,
             value: snapshot.data?["value"].toString() ?? '---',
-            date: snapshot.data?["date"].toDate(),
+            date: snapshot.data?["date"]?.toDate() ?? DateTime.now(),
             unit: '',
             iconColor: Colors.green.shade300,
           );

@@ -23,6 +23,10 @@ class Request {
     var token = authService.accessToken;
     Map<String, String> headers = {'Authorization': "Bearer $token"};
 
+    print('ACCESS TOKEN:');
+
+    print(token);
+
     try {
       http.Response response = await http
           .get(Uri.parse('$url/$startTime-$endTime'), headers: headers);

@@ -16,7 +16,7 @@ class HistoryStatsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: CustomAppBar(context: context),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
@@ -83,18 +83,6 @@ class HistoryStatsPage extends StatelessWidget {
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: BottomMenu(
-        currentIndex: 1,
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const HomePage()));
-          } else if (index == 1) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const HistoryPage()));
-          }
-        },
       ),
     );
   }

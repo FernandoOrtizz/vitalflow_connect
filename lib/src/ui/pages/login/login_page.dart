@@ -69,11 +69,12 @@ class _LoginScreenState extends State<LoginPage> {
                         onPressed: () async {
                           await context.read<GoogleAuth>().login();
                           context.read<CurrentUser>().email =
-                              FirebaseAuth.instance.currentUser!.email ?? "";
+                              FirebaseAuth.instance.currentUser?.email ?? "";
 
                           context.read<CurrentUser>().allowedUsersToMonitor =
                               await MonitoringPermission().getUserPermissions(
-                                  context.read<CurrentUser>().email);
+                                  FirebaseAuth.instance.currentUser?.email ??
+                                      '');
 
                           if (!context.mounted) return;
                           Navigator.pushReplacement(
