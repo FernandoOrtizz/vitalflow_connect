@@ -7,6 +7,7 @@ import 'package:vitalflow_connect/src/application/report/usecase.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/activity.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/monitoring_permission.dart';
 import 'package:vitalflow_connect/src/infrastructure/google_signin/signin.dart';
+import 'package:vitalflow_connect/src/provider/drop_down_provider.dart';
 import 'package:vitalflow_connect/src/provider/user.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/home_page.dart';
 import 'package:vitalflow_connect/src/ui/pages/login/login_page.dart';
@@ -28,6 +29,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider(create: (_) => GoogleAuth()),
       ChangeNotifierProvider(create: (_) => CurrentUser(monitoringPermissions)),
+      ChangeNotifierProvider(create: (_) => DorpDownProvider())
     ],
     child: const MyApp(),
   ));

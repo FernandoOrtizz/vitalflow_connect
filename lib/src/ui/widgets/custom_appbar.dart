@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:googleapis/cloudsearch/v1.dart';
 import 'package:provider/provider.dart';
+import 'package:vitalflow_connect/src/provider/drop_down_provider.dart';
 import 'package:vitalflow_connect/src/provider/user.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/set_permissions.dart';
 
@@ -20,8 +22,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
   String selectedOption = 'Mis datos';
 
   List<Map<String, dynamic>> options = [
-    {'name': 'Ingresar token', 'mail': ''},
-    {'name': 'Generar token', 'mail': ''},
+    {'name': 'Ingresar token', 'mail': 'Ingresar token'},
+    {'name': 'Generar token', 'mail': 'Generar token'},
     {'name': 'Mis datos', 'mail': FirebaseAuth.instance.currentUser?.email},
   ];
 
@@ -41,17 +43,23 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   Widget _buildDropdownButton(BuildContext context) {
+    DorpDownProvider actualDropDownState =
+        Provider.of<DorpDownProvider>(context, listen: false);
+
     return DropdownButton<String>(
       icon: const Icon(
         Icons.arrow_drop_down,
         color: Colors.white,
       ),
-      value: selectedOption,
+      value: actualDropDownState.dropDownEmail,
       onChanged: (String? newValue) {
         setState(() {
           selectedOption = newValue!;
 
-          // var user = context.read<CurrentUser>();
+          actualDropDownState.dropDownEmail = newValue;
+
+          print("DROPDOWN STATE:");
+          print(newValue);
         });
 
         if (newValue == 'Ingresar token') {
@@ -70,11 +78,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
         var user = Provider.of<CurrentUser>(context, listen: false);
         user.email = options
-            .firstWhere((element) => element['name'] == newValue)['mail'];
+            .firstWhere((element) => element['mail'] == newValue)['mail'];
       },
       items: options.map((option) {
         return DropdownMenuItem<String>(
-          value: option['name'],
+          value: option['mail'],
           child: Container(
             decoration: BoxDecoration(
               color: option == selectedOption
