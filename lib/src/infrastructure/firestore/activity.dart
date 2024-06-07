@@ -17,9 +17,6 @@ class Activity implements Destination, VitalFlowRepository {
   }
 
   Future<Map<String, dynamic>> getData(String email) async {
-    print(email);
-    print('===============================');
-
     Map<String, dynamic> data = {};
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -115,15 +112,13 @@ class Activity implements Destination, VitalFlowRepository {
         data[week] = values;
       }
 
-      // String name;
-
       data.forEach((key, value) {
         String startDate = DateFormat('yMMMMEEEEd').format(value[0]['date']);
 
         String endDate =
             DateFormat('yMMMMEEEEd').format(value[value.length - 1]['date']);
 
-        String dateRange = 'From $startDate to $endDate';
+        String dateRange = '$startDate a $endDate';
 
         dateFormatedData[dateRange] = value;
       });
@@ -187,6 +182,124 @@ class Activity implements Destination, VitalFlowRepository {
   String getVitalFlowName() {
     return 'activity';
   }
+
+  Future<List<double>> getDailyDataGroupedByHour(
+      String email, DateTime startDate, DateTime endDate) async {
+    List<double> valuePerHour = [];
+
+    for (var i = 0; i < 24; i++) {
+      valuePerHour.add(0);
+    }
+
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("steps")
+          .where("userEmail", isEqualTo: email)
+          .where("date", isLessThan: startDate)
+          .where("date", isGreaterThan: endDate)
+          .orderBy("date", descending: true)
+          .get();
+
+      for (var docSnapshot in querySnapshot.docs) {
+        Map<String, dynamic> doc = docSnapshot.data() as Map<String, dynamic>;
+
+        DateTime date = doc['date'].toDate() ?? '';
+        int key = date.hour - 1;
+        double currentValue = valuePerHour[key];
+        currentValue += doc['value'];
+        valuePerHour[key] = currentValue;
+      }
+    } catch (e) {
+      throw Exception('Could not get steps from Google Fit. $e');
+    }
+
+    return valuePerHour;
+  }
+}
+
+Future<Map<String, double>> getWeeklyDataGroupedByDay(
+    String email, DateTime startDate, DateTime endDate) async {
+  Map<String, double> valuePerDay = {};
+
+  for (var i = 0; i < 7; i++) {
+    String weekDayKey = translateDay[
+        DateFormat('EEEE').format(startDate.add(Duration(days: i)))]!;
+    valuePerDay[weekDayKey] = 0;
+  }
+
+  try {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection("steps")
+        .where("userEmail", isEqualTo: email)
+        .where("date", isLessThan: startDate)
+        .where("date", isGreaterThan: endDate)
+        .orderBy("date", descending: true)
+        .get();
+
+    for (var docSnapshot in querySnapshot.docs) {
+      Map<String, dynamic> doc = docSnapshot.data() as Map<String, dynamic>;
+      DateTime date = doc['date'].toDate() ?? '';
+
+      String weekDayKey = translateDay[DateFormat('EEEE').format(date)]!;
+      double currentValue = valuePerDay[weekDayKey] ?? 0;
+      currentValue += doc['value'];
+      valuePerDay[weekDayKey] = currentValue;
+    }
+  } catch (e) {
+    throw Exception('Could not get steps from Google Fit. $e');
+  }
+
+  return valuePerDay;
+}
+
+Future<Map<String, double>> getMonthDataGroupedByWeek(
+    String email, DateTime startDate, DateTime endDate) async {
+  Map<String, double> valuePerWeek = {};
+  Map<String, MontlyMetadata> tempValuePerWeek = {};
+
+  for (var i = 0; i < 4; i++) {
+    DateTime weekStartDate =
+        DateTime.now().add(Duration(days: -(endDate.day * i)));
+    String weekStartDateFormat = DateFormat('yMMMMEEEEd').format(weekStartDate);
+
+    DateTime weekEndDate = weekStartDate.add(const Duration(days: -7));
+    String weekEndDateFormat = DateFormat('yMMMMEEEEd').format(weekEndDate);
+
+    tempValuePerWeek['$weekStartDateFormat - $weekEndDateFormat'] =
+        MontlyMetadata(
+            startDate: weekStartDate, endDate: weekEndDate, value: 0);
+  }
+
+  tempValuePerWeek.forEach((key, value) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("steps")
+          .where("userEmail", isEqualTo: email)
+          .where("date", isGreaterThan: value.startDate)
+          .where("date", isLessThan: value.endDate)
+          .orderBy("date", descending: true)
+          .get();
+
+      for (var docSnapshot in querySnapshot.docs) {
+        Map<String, dynamic> doc = docSnapshot.data() as Map<String, dynamic>;
+        double currentValue = valuePerWeek[key] ?? 0;
+        currentValue += doc['value'];
+        valuePerWeek[key] = currentValue;
+      }
+    } catch (e) {
+      throw Exception('Could not get steps from Google Fit. $e');
+    }
+  });
+
+  return valuePerWeek;
+}
+
+class MontlyMetadata {
+  late DateTime startDate;
+  late DateTime endDate;
+  late double value;
+
+  MontlyMetadata({required startDate, required endDate, required value});
 }
 
 var translateDay = {
