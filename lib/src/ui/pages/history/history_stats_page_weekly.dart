@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:vitalflow_connect/src/ui/widgets/charts/history_barchart_weekly.dart';
 import 'package:vitalflow_connect/src/ui/widgets/custom_appbar.dart';
 import 'package:vitalflow_connect/src/ui/widgets/charts/history_barchart.dart';
 
 // ignore: must_be_immutable
-class HistoryStatsPage extends StatelessWidget {
+class HistoryStatsPageWeekly extends StatelessWidget {
   String title = "N/A";
-  Map<String, List<double>> data;
+  Map<String, Map<String, double>> data;
 
-  HistoryStatsPage({super.key, required this.title, required this.data});
+  HistoryStatsPageWeekly({super.key, required this.title, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class HistoryStatsPage extends StatelessWidget {
               const SizedBox(
                 height: 40,
               ),
-              HistoryBarchart(
+              HistoryBarchartWeekly(
                 title: "Ritmo cardíaco por hora",
                 icon: Icon(
                   Icons.monitor_heart_outlined,
@@ -39,7 +40,7 @@ class HistoryStatsPage extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              HistoryBarchart(
+              HistoryBarchartWeekly(
                 title: "Descanso - Ritmo cardíaco por hora",
                 icon: Icon(
                   Icons.monitor_heart_outlined,
@@ -51,7 +52,7 @@ class HistoryStatsPage extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              HistoryBarchart(
+              HistoryBarchartWeekly(
                 title: "Cantidad de pasos por hora",
                 icon: Icon(
                   Icons.monitor_heart_outlined,
@@ -63,8 +64,8 @@ class HistoryStatsPage extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              HistoryBarchart(
-                title: " calorias quemadas por hora",
+              HistoryBarchartWeekly(
+                title: "calorias quemadas por hora",
                 icon: Icon(
                   Icons.monitor_heart_outlined,
                   color: Colors.green.shade700,

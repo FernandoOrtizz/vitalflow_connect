@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,8 +7,11 @@ import 'package:vitalflow_connect/src/infrastructure/firestore/calories_expended
 import 'package:vitalflow_connect/src/infrastructure/firestore/heart_rate.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/resting_heart_rate.dart';
 import 'package:vitalflow_connect/src/ui/pages/history/history_stats_page.dart';
+import 'package:vitalflow_connect/src/ui/pages/history/history_stats_page_monthly.dart';
+import 'package:vitalflow_connect/src/ui/pages/history/history_stats_page_weekly.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/home_page.dart';
 import 'package:vitalflow_connect/src/ui/widgets/custom_appbar.dart';
+
 import 'package:vitalflow_connect/src/ui/widgets/history_card_widget.dart';
 
 import '../../../application/report/usecase.dart';
@@ -24,11 +25,13 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
+  Activity act = Activity();
+
   String _selectedScale = 'Días';
   Report report = Report([]);
 
   String email = FirebaseAuth.instance.currentUser?.email ?? '';
-  DateTime start = DateTime.now().add(Duration(days: -300));
+  DateTime start = DateTime(2024, 5, 31);
   DateTime end = DateTime.now();
 
   List<Widget> widgetList = [];
@@ -49,7 +52,10 @@ class _HistoryPageState extends State<HistoryPage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const HistoryStatsPage(),
+                builder: (context) => HistoryStatsPage(
+                  title: key,
+                  data: {},
+                ),
               ));
         },
         child: const HistoryCardWidget(
@@ -67,23 +73,13 @@ class _HistoryPageState extends State<HistoryPage> {
 
   void initData() async {
     List<VitalFlowRepository> repositories = <VitalFlowRepository>[
-      // Activity(),
-      // CaloriesExpended(),
+      Activity(),
+      CaloriesExpended(),
       HeartRate(),
-      // RestingHeartRate()
+      RestingHeartRate(),
     ];
 
     report = Report(repositories);
-
-    print('daily average data');
-    // print(await report.getDailyAverageData(email, start, end));
-    print(await report.getMonthlyAverageData(email));
-
-    // print('weekly average data');
-    // print(report.getWeeklyAverageData(email, start, end));
-
-    // print('monthly average data');
-    // print(report.getMonthlyAverageData(email));
   }
 
   @override
@@ -109,14 +105,33 @@ class _HistoryPageState extends State<HistoryPage> {
                         switch (newValue) {
                           case 'Días':
                             filterInfo = await getDailyInfo();
+
+                            int index = 0;
                             filterInfo.forEach((key, value) {
+                              DateTime date =
+                                  DateTime.now().add(Duration(days: -index));
+                              var startDate = DateTime(
+                                  date.year, date.month, date.day, 0, 1, 0);
+                              var endDate = DateTime(
+                                  date.year, date.month, date.day, 23, 59, 59);
+
                               widgetListTemp.add(GestureDetector(
-                                onTap: () {
+                                onTap: () async {
+                                  Map<String, List<double>> data =
+                                      await report.getDailyDataGroupedByHour(
+                                          FirebaseAuth.instance.currentUser
+                                                  ?.email ??
+                                              '',
+                                          startDate,
+                                          endDate);
+
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            const HistoryStatsPage(),
+                                        builder: (context) => HistoryStatsPage(
+                                          title: key,
+                                          data: data,
+                                        ),
                                       ));
                                 },
                                 child: HistoryCardWidget(
@@ -138,17 +153,39 @@ class _HistoryPageState extends State<HistoryPage> {
                                       : '0',
                                 ),
                               ));
+                              index += 1;
                             });
                           case 'Semanas':
                             filterInfo = await getWeeklyInfo();
+                            int index = 0;
+
                             filterInfo.forEach((key, value) {
+                              DateTime date = DateTime.now()
+                                  .add(Duration(days: -index * 8));
+                              var endDate = DateTime(
+                                  date.year, date.month, date.day, 23, 59, 59);
+                              var startDate = DateTime(endDate.year,
+                                      endDate.month, endDate.day, 0, 1, 0)
+                                  .add(const Duration(days: -7));
+
                               widgetListTemp.add(GestureDetector(
-                                onTap: () {
+                                onTap: () async {
+                                  Map<String, Map<String, double>> data =
+                                      await report.getWeeklyDataGroupedByDay(
+                                          FirebaseAuth.instance.currentUser
+                                                  ?.email ??
+                                              '',
+                                          startDate,
+                                          endDate);
+
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            const HistoryStatsPage(),
+                                            HistoryStatsPageWeekly(
+                                          title: key,
+                                          data: data,
+                                        ),
                                       ));
                                 },
                                 child: HistoryCardWidget(
@@ -170,10 +207,78 @@ class _HistoryPageState extends State<HistoryPage> {
                                       : '0',
                                 ),
                               ));
+                              index += 1;
                             });
-                          // getWeeklyInfo();
+                          case 'Meses':
+                            filterInfo = await getMonthlyInfo();
+                            int index = 0;
+
+                            filterInfo.forEach((key, value) {
+                              DateTime date = DateTime.now()
+                                  .add(Duration(days: -index * 30));
+                              DateTime endDayOfMonth =
+                                  DateTime(date.year, date.month + 1, 0);
+
+                              var endDate = DateTime(
+                                  endDayOfMonth.year,
+                                  endDayOfMonth.month,
+                                  endDayOfMonth.day,
+                                  23,
+                                  59,
+                                  59);
+                              var startDate = DateTime(
+                                  endDate.year, endDate.month, 1, 0, 1, 0);
+
+                              if (endDate.isAfter(DateTime.now())) {
+                                endDate = DateTime.now();
+                              }
+
+                              widgetListTemp.add(GestureDetector(
+                                onTap: () async {
+                                  Map<String, Map<String, double>> data =
+                                      await report.getMonthlyDataGroupedByWeek(
+                                          FirebaseAuth.instance.currentUser
+                                                  ?.email ??
+                                              '',
+                                          startDate,
+                                          endDate);
+
+                                  print('key: $key');
+                                  print('start: $startDate, end: $endDate');
+                                  print(data);
+
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            HistoryStatsPageMonthly(
+                                          title: key,
+                                          data: data,
+                                        ),
+                                      ));
+                                },
+                                child: HistoryCardWidget(
+                                  title: key,
+                                  bpmValue: value['heart_rate'] != null
+                                      ? value['heart_rate']!.toStringAsFixed(2)
+                                      : '0',
+                                  sleepValue: '7.7',
+                                  oxValue: '95',
+                                  stepsValue: value['activity'] != null
+                                      ? value['activity']!.toStringAsFixed(2)
+                                      : '0',
+                                  restBpmValue: value['resting_bpm'] != null
+                                      ? value['resting_bpm']!.toStringAsFixed(2)
+                                      : '0',
+                                  calories: value['calories_expended'] != null
+                                      ? value['calories_expended']!
+                                          .toStringAsFixed(2)
+                                      : '0',
+                                ),
+                              ));
+                              index += 1;
+                            });
                         }
-                        // getDailyInfo();
 
                         setState(() {
                           widgetList = [];
@@ -230,26 +335,42 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   Future<Map<String, Map<String, double>>> getWeeklyInfo() async {
-    //
     Map<String, Map<String, double>> weekDataResult = {};
     Map<String, Map<String, double>> weeklyData =
         await report.getWeeklyAverageData(email, start, end);
 
     weeklyData.forEach((vitalFlow, value) {
       value.forEach((dateRange, vitalValue) {
-        weekDataResult[dateRange] = {};
-      });
-      value.forEach((dateRange, vitalValue) {
+        var current = weekDataResult[dateRange];
+        if (current == null) {
+          weekDataResult[dateRange] = {};
+        }
         weekDataResult[dateRange]?.addAll({vitalFlow: vitalValue});
       });
     });
 
-    print('Week');
-    print(weekDataResult);
     return weekDataResult;
   }
 
-  // Future<Map<String, Map<String, double>>> getMonthlyInfo() async {
+  Future<Map<String, Map<String, double>>> getMonthlyInfo() async {
+    Map<String, Map<String, double>> monthDataResult = {};
 
-  // }
+    DateTime now = DateTime.now();
+    Map<String, Map<String, double>> monthlyData =
+        await report.getMonthlyAverageData(
+            email, DateTime(now.year - 1, now.month, now.day), now);
+
+    monthlyData.forEach((vitalFlow, value) {
+      value.forEach((dateRange, vitalValue) {
+        var current = monthDataResult[dateRange];
+        if (current == null) {
+          monthDataResult[dateRange] = {};
+        }
+
+        monthDataResult[dateRange]?.addAll({vitalFlow: vitalValue});
+      });
+    });
+
+    return monthDataResult;
+  }
 }
