@@ -4,26 +4,35 @@ import 'dart:math';
 // import 'package:fl_chart_app/util/extensions/color_extensions.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class HistoryBarchart extends StatefulWidget {
   final String title;
   final Icon icon;
   final Color color;
+  List<double> dataPerHour;
 
-  const HistoryBarchart(
+  HistoryBarchart(
       {super.key,
       required this.title,
       required this.icon,
-      required this.color});
+      required this.color,
+      required this.dataPerHour});
 
   final Color barBackgroundColor = Colors.black;
   final Color barColor = Colors.black;
 
   @override
-  State<StatefulWidget> createState() => BarChartSample1State();
+  State<StatefulWidget> createState() =>
+      BarChartSample1State(data: dataPerHour);
 }
 
 class BarChartSample1State extends State<HistoryBarchart> {
+  List<double> data = [];
+
+  BarChartSample1State({required this.data});
+
+  // ignore: empty_constructor_bodies
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
@@ -60,7 +69,7 @@ class BarChartSample1State extends State<HistoryBarchart> {
               ),
               Expanded(
                 child: BarChart(
-                  randomData(),
+                  randomData(this.data),
                 ),
               ),
             ],
@@ -119,9 +128,12 @@ class BarChartSample1State extends State<HistoryBarchart> {
     );
   }
 
-  BarChartData randomData() {
+  BarChartData randomData(List<double> list) {
+    list = [0.0, ...list];
+    double maxY = list.reduce(max);
+
     return BarChartData(
-      maxY: 200.0,
+      maxY: maxY,
       barTouchData: BarTouchData(
         enabled: false,
       ),
@@ -136,7 +148,7 @@ class BarChartSample1State extends State<HistoryBarchart> {
         ),
         leftTitles: const AxisTitles(
           sideTitles: SideTitles(
-            reservedSize: 33,
+            reservedSize: 40,
             showTitles: true,
           ),
         ),
@@ -158,10 +170,158 @@ class BarChartSample1State extends State<HistoryBarchart> {
         12,
         (i) => makeGroupData(
           i,
-          Random().nextInt(200).toDouble(),
+          list[i * 2].toDouble(),
         ),
       ),
       gridData: const FlGridData(show: false),
     );
   }
+
+  // horas  [0,0,0,0,0,0,0,0,0,0,2324,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  // indice [0,1,2,3,4,5,6]
+
+  // BarChartData randomData() {
+  //   Map<String, double> mapa = {
+  //     'Viernes': 32,
+  //     'Jueves': 32,
+  //     'Miércoles': 32,
+  //     'Martes': 32,
+  //     'Lunes': 32,
+  //     'Domingo': 32,
+  //     'Sábado': 32,
+  //   };
+
+  //   return BarChartData(
+  //     maxY: 200.0,
+  //     barTouchData: BarTouchData(
+  //       enabled: false,
+  //     ),
+  //     titlesData: FlTitlesData(
+  //       show: true,
+  //       bottomTitles: AxisTitles(
+  //         sideTitles: SideTitles(
+  //           showTitles: true,
+  //           getTitlesWidget: getTitles2,
+  //           reservedSize: 30,
+  //         ),
+  //       ),
+  //       leftTitles: const AxisTitles(
+  //         sideTitles: SideTitles(
+  //           reservedSize: 33,
+  //           showTitles: true,
+  //         ),
+  //       ),
+  //       topTitles: const AxisTitles(
+  //         sideTitles: SideTitles(
+  //           showTitles: false,
+  //         ),
+  //       ),
+  //       rightTitles: const AxisTitles(
+  //         sideTitles: SideTitles(
+  //           showTitles: false,
+  //         ),
+  //       ),
+  //     ),
+  //     borderData: FlBorderData(
+  //       show: false,
+  //     ),
+  //     barGroups: List.generate(
+  //       7,
+  //       (i) => makeGroupData(
+  //         i + 1,
+  //         mapa[dayName(i.toInt())]?.toDouble() ?? 0,
+  //       ),
+  //     ),
+  //     gridData: const FlGridData(show: false),
+  //   );
+  // }
+
+  // String dayName(int i) {
+  //   String data = translateDay[DateFormat('EEEE')
+  //           .format(DateTime.now().add(Duration(days: -i)))] ??
+  //       '';
+
+  //   print('$i DAYNAME + $data');
+  //   return translateDay[DateFormat('EEEE')
+  //           .format(DateTime.now().add(Duration(days: -i)))] ??
+  //       '';
+  // }
 }
+
+// BarChartData randomData() {
+//   Map<String, double> mapa = {
+//     'Viernes': 32,
+//     'Jueves': 32,
+//     'Miércoles': 32,
+//     'Martes': 32,
+//     'Lunes': 32,
+//     'Domingo': 32,
+//     'Sábado': 32,
+//   };
+
+//   return BarChartData(
+//     maxY: 200.0,
+//     barTouchData: BarTouchData(
+//       enabled: false,
+//     ),
+//     titlesData: FlTitlesData(
+//       show: true,
+//       bottomTitles: AxisTitles(
+//         sideTitles: SideTitles(
+//           showTitles: true,
+//           getTitlesWidget: getTitles2,
+//           reservedSize: 30,
+//         ),
+//       ),
+//       leftTitles: const AxisTitles(
+//         sideTitles: SideTitles(
+//           reservedSize: 33,
+//           showTitles: true,
+//         ),
+//       ),
+//       topTitles: const AxisTitles(
+//         sideTitles: SideTitles(
+//           showTitles: false,
+//         ),
+//       ),
+//       rightTitles: const AxisTitles(
+//         sideTitles: SideTitles(
+//           showTitles: false,
+//         ),
+//       ),
+//     ),
+//     borderData: FlBorderData(
+//       show: false,
+//     ),
+//     barGroups: List.generate(
+//       7,
+//       (i) => makeGroupData(
+//         i + 1,
+//         mapa[dayName(i.toInt())]?.toDouble() ?? 0,
+//       ),
+//     ),
+//     gridData: const FlGridData(show: false),
+//   );
+// }
+
+// String dayName(int i) {
+//   String data = translateDay[DateFormat('EEEE')
+//           .format(DateTime.now().add(Duration(days: -i)))] ??
+//       '';
+
+//   print('$i DAYNAME + $data');
+//   return translateDay[DateFormat('EEEE')
+//           .format(DateTime.now().add(Duration(days: -i)))] ??
+//       '';
+// }
+// }
+
+var translateDay = {
+  'Monday': 'Lunes',
+  'Tuesday': 'Martes',
+  'Wednesday': 'Miércoles',
+  'Thursday': 'Jueves',
+  'Friday': 'Viernes',
+  'Saturday': 'Sábado',
+  'Sunday': 'Domingo'
+};

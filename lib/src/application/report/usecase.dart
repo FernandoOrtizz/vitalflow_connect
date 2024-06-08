@@ -31,10 +31,47 @@ class Report {
   }
 
   Future<Map<String, Map<String, double>>> getMonthlyAverageData(
-      String email) async {
+      String email, DateTime startDate, DateTime endDate) async {
     Map<String, Map<String, double>> result = {};
     for (var vitalFlow in _vitalFlows) {
-      var data = await vitalFlow.getMonthlyAverageData(email);
+      var data =
+          await vitalFlow.getMonthlyAverageData(email, startDate, endDate);
+      result.addAll({vitalFlow.getVitalFlowName(): data});
+    }
+
+    return result;
+  }
+
+  Future<Map<String, List<double>>> getDailyDataGroupedByHour(
+      String email, DateTime startDate, DateTime endDate) async {
+    Map<String, List<double>> result = {};
+    for (var vitalFlow in _vitalFlows) {
+      var data =
+          await vitalFlow.getDailyDataGroupedByHour(email, startDate, endDate);
+      result.addAll({vitalFlow.getVitalFlowName(): data});
+    }
+
+    return result;
+  }
+
+  Future<Map<String, Map<String, double>>> getWeeklyDataGroupedByDay(
+      String email, DateTime startDate, DateTime endDate) async {
+    Map<String, Map<String, double>> result = {};
+    for (var vitalFlow in _vitalFlows) {
+      var data =
+          await vitalFlow.getWeeklyDataGroupedByDay(email, startDate, endDate);
+      result.addAll({vitalFlow.getVitalFlowName(): data});
+    }
+
+    return result;
+  }
+
+  Future<Map<String, Map<String, double>>> getMonthlyDataGroupedByWeek(
+      String email, DateTime startDate, DateTime endDate) async {
+    Map<String, Map<String, double>> result = {};
+    for (var vitalFlow in _vitalFlows) {
+      var data =
+          await vitalFlow.getMonthDataGroupedByWeek(email, startDate, endDate);
       result.addAll({vitalFlow.getVitalFlowName(): data});
     }
 

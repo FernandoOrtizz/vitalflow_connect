@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:googleapis/cloudsearch/v1.dart';
 import 'package:provider/provider.dart';
 import 'package:vitalflow_connect/src/provider/drop_down_provider.dart';
 import 'package:vitalflow_connect/src/provider/user.dart';
@@ -57,9 +56,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
           selectedOption = newValue!;
 
           actualDropDownState.dropDownEmail = newValue;
-
-          print("DROPDOWN STATE:");
-          print(newValue);
         });
 
         if (newValue == 'Ingresar token') {

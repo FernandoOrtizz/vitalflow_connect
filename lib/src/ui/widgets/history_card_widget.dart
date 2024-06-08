@@ -6,8 +6,8 @@ class HistoryCardWidget extends StatelessWidget {
   final String sleepValue;
   final String oxValue;
   final String stepsValue;
-  final String stressValue;
-  final String pressureValue;
+  final String restBpmValue;
+  final String calories;
 
   const HistoryCardWidget({
     Key? key,
@@ -16,8 +16,8 @@ class HistoryCardWidget extends StatelessWidget {
     required this.sleepValue,
     required this.oxValue,
     required this.stepsValue,
-    required this.stressValue,
-    required this.pressureValue,
+    required this.restBpmValue,
+    required this.calories,
   }) : super(key: key);
 
   @override
@@ -39,8 +39,8 @@ class HistoryCardWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                _buildValueColumn(Icons.monitor_heart_outlined, bpmValue, '',
-                    Colors.green.shade700),
+                _buildValueColumn(
+                    Icons.favorite, bpmValue, '', Colors.pink.shade100),
                 const SizedBox(
                   width: 16,
                 ),
@@ -54,12 +54,12 @@ class HistoryCardWidget extends StatelessWidget {
               children: [
                 _buildSmallValueColumn(Icons.bloodtype_outlined, oxValue, '%',
                     Colors.blue.shade300),
-                _buildSmallValueColumn(Icons.directions_walk, stepsValue, '',
-                    Colors.green.shade300),
-                _buildSmallValueColumn(Icons.face_retouching_natural_sharp,
-                    stressValue, '%', Colors.orange.shade300),
-                _buildSmallValueColumn(Icons.favorite_border, pressureValue, '',
-                    Colors.pink.shade100),
+                _buildSmallValueColumn(Icons.directions_walk_rounded,
+                    stepsValue, '', Colors.green.shade300),
+                _buildSmallValueColumn(Icons.favorite_border_rounded,
+                    restBpmValue ?? '', '%', Colors.pink.shade100),
+                _buildSmallValueColumn(Icons.battery_charging_full_rounded,
+                    calories ?? '', '', Colors.orange.shade300),
               ],
             ),
           ],
