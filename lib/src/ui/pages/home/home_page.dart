@@ -48,17 +48,17 @@ class _HomePageState extends State<HomePage> {
             CardWidget(
               title: 'Sueño',
               iconData: Icons.brightness_3_outlined,
-              value: '7.7',
+              value: 'No hay datos',
               date: DateTime.now(),
-              unit: 'Horas',
+              unit: '',
               iconColor: Colors.blueGrey,
             ),
             CardWidget(
               title: 'Oxígeno en sangre',
               iconData: Icons.bloodtype_outlined,
-              value: '95',
+              value: 'No hay datos',
               date: DateTime.now(),
-              unit: '%',
+              unit: '',
               iconColor: Colors.blue.shade300,
             ),
           ],
@@ -80,17 +80,19 @@ class _HomePageState extends State<HomePage> {
     return FutureBuilder<Map<String, dynamic>>(
       future: CaloriesExpended().getData(context.watch<CurrentUser>().email),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (!snapshot.hasData ||
+            (snapshot.data != null && snapshot.data!.isEmpty)) {
           return CardWidget(
             title: 'Energía gastada',
             iconData: Icons.battery_charging_full_rounded,
-            value:
-                '', // Mostrar un indicador de carga mientras se obtienen los datos
+            value: 'No hay datos',
             date: DateTime.now(),
-            unit: 'Cals',
+            unit: '',
             iconColor: Colors.orange.shade300,
           );
-        } else if (snapshot.hasError) {
+        }
+
+        if (snapshot.hasError) {
           return CardWidget(
             title: 'Energía gastada',
             iconData: Icons.battery_charging_full_rounded,
@@ -99,16 +101,16 @@ class _HomePageState extends State<HomePage> {
             unit: 'Cals',
             iconColor: Colors.orange.shade300,
           );
-        } else {
-          return CardWidget(
-            title: 'Energía gastada',
-            iconData: Icons.battery_charging_full_rounded,
-            value: snapshot.data?["value"]?.toStringAsFixed(2) ?? '---',
-            date: snapshot.data?["date"]?.toDate() ?? DateTime.now(),
-            unit: 'Cals',
-            iconColor: Colors.orange.shade300,
-          );
         }
+
+        return CardWidget(
+          title: 'Energía gastada',
+          iconData: Icons.battery_charging_full_rounded,
+          value: snapshot.data?["value"]?.toStringAsFixed(2) ?? '---',
+          date: snapshot.data?["date"]?.toDate() ?? DateTime.now(),
+          unit: 'Cals',
+          iconColor: Colors.orange.shade300,
+        );
       },
     );
   }
@@ -117,17 +119,19 @@ class _HomePageState extends State<HomePage> {
     return FutureBuilder<Map<String, dynamic>>(
       future: HeartRate().getData(context.watch<CurrentUser>().email),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (!snapshot.hasData ||
+            (snapshot.data != null && snapshot.data!.isEmpty)) {
           return CardWidget(
             title: 'Ritmo cardiaco',
             iconData: Icons.favorite,
-            value:
-                '', // Mostrar un indicador de carga mientras se obtienen los datos
+            value: 'No hay datos',
             date: DateTime.now(),
-            unit: 'LPM',
+            unit: '',
             iconColor: Colors.pink.shade100,
           );
-        } else if (snapshot.hasError) {
+        }
+
+        if (snapshot.hasError) {
           return CardWidget(
             title: 'Ritmo cardiaco',
             iconData: Icons.favorite,
@@ -136,16 +140,16 @@ class _HomePageState extends State<HomePage> {
             unit: 'LPM',
             iconColor: Colors.pink.shade100,
           );
-        } else {
-          return CardWidget(
-            title: 'Ritmo cardiaco',
-            iconData: Icons.favorite,
-            value: snapshot.data?["value"].toString() ?? '---',
-            date: snapshot.data?["date"]?.toDate() ?? DateTime.now(),
-            unit: 'LPM',
-            iconColor: Colors.pink.shade100,
-          );
         }
+
+        return CardWidget(
+          title: 'Ritmo cardiaco',
+          iconData: Icons.favorite,
+          value: snapshot.data?["value"].toString() ?? '---',
+          date: snapshot.data?["date"]?.toDate() ?? DateTime.now(),
+          unit: 'LPM',
+          iconColor: Colors.pink.shade100,
+        );
       },
     );
   }
@@ -154,17 +158,19 @@ class _HomePageState extends State<HomePage> {
     return FutureBuilder<Map<String, dynamic>>(
       future: RestingHeartRate().getData(context.watch<CurrentUser>().email),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (!snapshot.hasData ||
+            (snapshot.data != null && snapshot.data!.isEmpty)) {
           return CardWidget(
             title: 'Ritmo cardiaco en reposo',
             iconData: Icons.favorite_border_rounded,
-            value:
-                '', // Mostrar un indicador de carga mientras se obtienen los datos
+            value: 'No hay datos',
             date: DateTime.now(),
-            unit: 'LPM',
+            unit: '',
             iconColor: Colors.pink.shade100,
           );
-        } else if (snapshot.hasError) {
+        }
+
+        if (snapshot.hasError) {
           return CardWidget(
             title: 'Ritmo cardiaco en reposo',
             iconData: Icons.favorite_border_rounded,
@@ -173,16 +179,16 @@ class _HomePageState extends State<HomePage> {
             unit: 'LPM',
             iconColor: Colors.pink.shade100,
           );
-        } else {
-          return CardWidget(
-            title: 'Ritmo cardiaco en reposo',
-            iconData: Icons.favorite_border_rounded,
-            value: snapshot.data?["value"].toString() ?? '---',
-            date: snapshot.data?["date"]?.toDate() ?? DateTime.now(),
-            unit: 'LPM',
-            iconColor: Colors.pink.shade100,
-          );
         }
+
+        return CardWidget(
+          title: 'Ritmo cardiaco en reposo',
+          iconData: Icons.favorite_border_rounded,
+          value: snapshot.data?["value"].toString() ?? '---',
+          date: snapshot.data?["date"]?.toDate() ?? DateTime.now(),
+          unit: 'LPM',
+          iconColor: Colors.pink.shade100,
+        );
       },
     );
   }
@@ -191,16 +197,19 @@ class _HomePageState extends State<HomePage> {
     return FutureBuilder<Map<String, dynamic>>(
       future: Activity().getData(context.watch<CurrentUser>().email),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (!snapshot.hasData ||
+            (snapshot.data != null && snapshot.data!.isEmpty)) {
           return CardWidget(
             title: 'Pasos',
             iconData: Icons.directions_walk_rounded,
-            value: '',
+            value: 'No hay datos',
             date: DateTime.now(),
             unit: '',
             iconColor: Colors.green.shade300,
           );
-        } else if (snapshot.hasError) {
+        }
+
+        if (snapshot.hasError) {
           return CardWidget(
             title: 'Pasos',
             iconData: Icons.directions_walk_rounded,
@@ -209,16 +218,16 @@ class _HomePageState extends State<HomePage> {
             unit: '',
             iconColor: Colors.green.shade300,
           );
-        } else {
-          return CardWidget(
-            title: 'Pasos',
-            iconData: Icons.directions_walk_rounded,
-            value: snapshot.data?["value"].toString() ?? '---',
-            date: snapshot.data?["date"]?.toDate() ?? DateTime.now(),
-            unit: '',
-            iconColor: Colors.green.shade300,
-          );
         }
+
+        return CardWidget(
+          title: 'Pasos',
+          iconData: Icons.directions_walk_rounded,
+          value: snapshot.data?["value"].toString() ?? 'No hay datos',
+          date: snapshot.data?["date"]?.toDate() ?? DateTime.now(),
+          unit: '',
+          iconColor: Colors.green.shade300,
+        );
       },
     );
   }

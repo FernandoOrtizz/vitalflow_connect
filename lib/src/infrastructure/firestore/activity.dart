@@ -118,7 +118,6 @@ class Activity implements Destination, VitalFlowRepository {
 
         String startDate = DateFormat('MMMM d', 'es_ES')
             .format(weekStartEndDate['startOfWeek'] ?? DateTime.now());
-        // startDate = translateMonth[startDate]
 
         String endDate = DateFormat('MMMM d', 'es_ES')
             .format(weekStartEndDate['endOfWeek'] ?? DateTime.now());
@@ -136,6 +135,8 @@ class Activity implements Destination, VitalFlowRepository {
         average /= value.length;
         averageData[key] = average;
       });
+
+      print('DATA: $averageData');
 
       return averageData;
     } catch (e) {
@@ -225,6 +226,7 @@ class Activity implements Destination, VitalFlowRepository {
 
   Future<Map<String, double>> getWeeklyDataGroupedByDay(
       String email, DateTime startDate, DateTime endDate) async {
+    print('FECHAS - $startDate -- $endDate');
     Map<String, double> valuePerDay = {};
 
     for (var i = 0; i < 7; i++) {
@@ -237,8 +239,8 @@ class Activity implements Destination, VitalFlowRepository {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("steps")
           .where("userEmail", isEqualTo: email)
-          .where("date", isLessThan: startDate)
-          .where("date", isGreaterThan: endDate)
+          .where("date", isLessThan: endDate)
+          .where("date", isGreaterThan: startDate)
           .orderBy("date", descending: true)
           .get();
 
@@ -254,6 +256,8 @@ class Activity implements Destination, VitalFlowRepository {
     } catch (e) {
       throw Exception('Could not get steps from Google Fit. $e');
     }
+
+    print('Valor por día=== $valuePerDay');
 
     return valuePerDay;
   }

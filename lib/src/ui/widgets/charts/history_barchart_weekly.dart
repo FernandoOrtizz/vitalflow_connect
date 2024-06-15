@@ -159,6 +159,27 @@ class BarChartSample1State extends State<HistoryBarchartWeekly> {
   }
 
   String dayName(int i) {
+    // String day='';
+
+    // switch (i) {
+    //   case 1:
+    //     day = 'Lunes';
+    //   case 2:
+    //     day = 'Martes';
+    //   case 3:
+    //     day = 'Miércoles';
+    //   case 4:
+    //     day = 'Jueves';
+    //   case 5:
+    //     day = 'Viernes';
+    //   case 6:
+    //     day = 'Sábado';
+    //   case 7:
+    //     day = 'Domingo';
+    // }
+
+    // return day;
+
     return translateDay[DateFormat('EEEE')
             .format(DateTime.now().add(Duration(days: -i)))] ??
         '';

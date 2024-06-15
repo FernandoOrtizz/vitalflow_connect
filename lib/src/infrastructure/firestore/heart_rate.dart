@@ -115,11 +115,14 @@ class HeartRate implements Destination, VitalFlowRepository {
       // String name;
 
       data.forEach((key, value) {
-        String startDate =
-            DateFormat('MMMM d', 'es_ES').format(value[0]['date']);
-        // startDate = translateMonth[startDate]
+        Map<String, DateTime> weekStartEndDate =
+            getStartAndEndDateOfWeek(int.parse(key), 2024);
 
-        String endDate = DateFormat('MMMM d', 'es_ES').format(value[0]['date']);
+        String startDate = DateFormat('MMMM d', 'es_ES')
+            .format(weekStartEndDate['startOfWeek'] ?? DateTime.now());
+
+        String endDate = DateFormat('MMMM d', 'es_ES')
+            .format(weekStartEndDate['endOfWeek'] ?? DateTime.now());
 
         String dateRange = '$startDate a $endDate';
 

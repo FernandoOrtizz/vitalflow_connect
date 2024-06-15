@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vitalflow_connect/src/provider/drop_down_provider.dart';
 import 'package:vitalflow_connect/src/provider/user.dart';
+import 'package:vitalflow_connect/src/ui/pages/home/home_page.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/set_permissions.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -72,9 +73,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
           return;
         }
 
-        var user = Provider.of<CurrentUser>(context, listen: false);
-        user.email = options
-            .firstWhere((element) => element['mail'] == newValue)['mail'];
+        setState(() {
+          var user = Provider.of<CurrentUser>(context, listen: false);
+          user.email = options
+              .firstWhere((element) => element['mail'] == newValue)['mail'];
+
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const HomePage()));
+        });
       },
       items: options.map((option) {
         return DropdownMenuItem<String>(

@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -32,13 +32,12 @@ class _HistoryPageState extends State<HistoryPage> {
   String _selectedScale = 'Días';
   Report report = Report([]);
 
-  String email = FirebaseAuth.instance.currentUser?.email ?? '';
   DateTime start = DateTime(2024, 5, 31);
   DateTime end = DateTime.now();
-
   List<Widget> widgetList = [];
 
   Future<Map<String, Map<String, double>>>? _myData;
+  String _email = '';
 
   @override
   void initState() {
@@ -51,61 +50,179 @@ class _HistoryPageState extends State<HistoryPage> {
 
     report = Report(repositories);
 
-    _myData = getDailyInfo();
+    _email = context.read<CurrentUser>().email;
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    _email = context.watch<CurrentUser>().email;
+    _myData = getDailyInfo(_email);
+
+    switch (_selectedScale) {
+      case 'Días':
+        _myData = getDailyInfo(_email);
+        break;
+      case 'Semanas':
+        _myData = getWeeklyInfo(_email);
+        break;
+      case 'Meses':
+        _myData = getMonthlyInfo(_email);
+        break;
+    }
+
     return FutureBuilder(future: _myData, builder: _buildFuture);
   }
 
   Widget _buildFuture(BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-    if (snapshot.hasData && widgetList.isEmpty) {
-      int index = 0;
-      snapshot.data.forEach((key, value) {
-        DateTime date = DateTime.now().add(Duration(days: -index));
-        var startDate = DateTime(date.year, date.month, date.day, 0, 1, 0);
-        var endDate = DateTime(date.year, date.month, date.day, 23, 59, 59);
+    if (snapshot.hasData) {
+      widgetList = [];
 
-        widgetList.add(GestureDetector(
-          onTap: () async {
-            Map<String, List<double>> data =
-                await report.getDailyDataGroupedByHour(
-                    Provider.of<CurrentUser>(context, listen: false).email,
-                    startDate,
-                    endDate);
+      switch (_selectedScale) {
+        case 'Días':
+          int index = 0;
+          snapshot.data.forEach((key, value) {
+            DateTime date = DateTime.now().add(Duration(days: -index));
+            var startDate = DateTime(date.year, date.month, date.day, 0, 1, 0);
+            var endDate = DateTime(date.year, date.month, date.day, 23, 59, 59);
 
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HistoryStatsPage(
-                    title: key,
-                    data: data,
-                  ),
-                ));
-          },
-          child: HistoryCardWidget(
-            title: key,
-            bpmValue: value['heart_rate'] != null
-                ? value['heart_rate']!.toStringAsFixed(2)
-                : '0',
-            sleepValue: '7.7',
-            oxValue: '95',
-            stepsValue: value['activity'] != null
-                ? value['activity']!.toStringAsFixed(2)
-                : '0',
-            restBpmValue: value['resting_bpm'] != null
-                ? value['resting_bpm']!.toStringAsFixed(2)
-                : '0',
-            calories: value['calories_expended'] != null
-                ? value['calories_expended']!.toStringAsFixed(2)
-                : '0',
+            widgetList.add(GestureDetector(
+              onTap: () async {
+                Map<String, List<double>> data = await report
+                    .getDailyDataGroupedByHour(_email, startDate, endDate);
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HistoryStatsPage(
+                        title: key,
+                        data: data,
+                      ),
+                    ));
+              },
+              child: HistoryCardWidget(
+                title: key,
+                bpmValue: value['heart_rate'] != null
+                    ? value['heart_rate']!.toStringAsFixed(2)
+                    : '0',
+                sleepValue: '0',
+                oxValue: '0',
+                stepsValue: value['activity'] != null
+                    ? value['activity']!.toStringAsFixed(2)
+                    : '0',
+                restBpmValue: value['resting_bpm'] != null
+                    ? value['resting_bpm']!.toStringAsFixed(2)
+                    : '0',
+                calories: value['calories_expended'] != null
+                    ? value['calories_expended']!.toStringAsFixed(2)
+                    : '0',
+              ),
+            ));
+            index += 1;
+          });
+        case 'Semanas':
+          int index = 0;
+
+          snapshot.data.forEach((key, value) {
+            DateTime date = getSundayOfCurrentWeek();
+            var endDate = DateTime(date.year, date.month, date.day, 23, 59, 59);
+            var startDate =
+                DateTime(endDate.year, endDate.month, endDate.day, 0, 0, 1)
+                    .add(const Duration(days: -6));
+
+            widgetList.add(GestureDetector(
+              onTap: () async {
+                Map<String, Map<String, double>> data = await report
+                    .getWeeklyDataGroupedByDay(_email, startDate, endDate);
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HistoryStatsPageWeekly(
+                        title: key,
+                        data: data,
+                      ),
+                    ));
+              },
+              child: HistoryCardWidget(
+                title: key,
+                bpmValue: value['heart_rate'] != null
+                    ? value['heart_rate']!.toStringAsFixed(2)
+                    : '0',
+                sleepValue: '0',
+                oxValue: '0',
+                stepsValue: value['activity'] != null
+                    ? value['activity']!.toStringAsFixed(2)
+                    : '0',
+                restBpmValue: value['resting_bpm'] != null
+                    ? value['resting_bpm']!.toStringAsFixed(2)
+                    : '0',
+                calories: value['calories_expended'] != null
+                    ? value['calories_expended']!.toStringAsFixed(2)
+                    : '0',
+              ),
+            ));
+            index += 1;
+          });
+        case 'Meses':
+          int index = 0;
+
+          snapshot.data.forEach((key, value) {
+            DateTime date = DateTime.now().add(Duration(days: -index * 30));
+            DateTime endDayOfMonth = DateTime(date.year, date.month + 1, 0);
+
+            var endDate = DateTime(endDayOfMonth.year, endDayOfMonth.month,
+                endDayOfMonth.day, 23, 59, 59);
+            var startDate = DateTime(endDate.year, endDate.month, 1, 0, 1, 0);
+
+            if (endDate.isAfter(DateTime.now())) {
+              endDate = DateTime.now();
+            }
+
+            widgetList.add(GestureDetector(
+              onTap: () async {
+                Map<String, Map<String, double>> data = await report
+                    .getMonthlyDataGroupedByWeek(_email, startDate, endDate);
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HistoryStatsPageMonthly(
+                        title: key,
+                        data: data,
+                      ),
+                    ));
+              },
+              child: HistoryCardWidget(
+                title: key,
+                bpmValue: value['heart_rate'] != null
+                    ? value['heart_rate']!.toStringAsFixed(2)
+                    : '0',
+                sleepValue: '0',
+                oxValue: '0',
+                stepsValue: value['activity'] != null
+                    ? value['activity']!.toStringAsFixed(2)
+                    : '0',
+                restBpmValue: value['resting_bpm'] != null
+                    ? value['resting_bpm']!.toStringAsFixed(2)
+                    : '0',
+                calories: value['calories_expended'] != null
+                    ? value['calories_expended']!.toStringAsFixed(2)
+                    : '0',
+              ),
+            ));
+            index += 1;
+          });
+      }
+
+      if (widgetList.isEmpty) {
+        widgetList.add(
+          const Center(
+            child: Text('No hay datos disponibles'),
           ),
-        ));
-        index += 1;
-      });
+        );
+      }
     }
 
     return Scaffold(
@@ -123,191 +240,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     DropdownButton<String>(
                       value: _selectedScale,
                       onChanged: (newValue) async {
-                        List<Widget> widgetListTemp = [];
-                        Map<String, Map<String, double>> filterInfo = {};
-
-                        switch (newValue) {
-                          case 'Días':
-                            filterInfo = await getDailyInfo();
-
-                            int index = 0;
-                            filterInfo.forEach((key, value) {
-                              DateTime date =
-                                  DateTime.now().add(Duration(days: -index));
-                              var startDate = DateTime(
-                                  date.year, date.month, date.day, 0, 1, 0);
-                              var endDate = DateTime(
-                                  date.year, date.month, date.day, 23, 59, 59);
-
-                              widgetListTemp.add(GestureDetector(
-                                onTap: () async {
-                                  Map<String, List<double>> data =
-                                      await report.getDailyDataGroupedByHour(
-                                          Provider.of<CurrentUser>(context,
-                                                  listen: false)
-                                              .email,
-                                          startDate,
-                                          endDate);
-
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => HistoryStatsPage(
-                                          title: key,
-                                          data: data,
-                                        ),
-                                      ));
-                                },
-                                child: HistoryCardWidget(
-                                  title: key,
-                                  bpmValue: value['heart_rate'] != null
-                                      ? value['heart_rate']!.toStringAsFixed(2)
-                                      : '0',
-                                  sleepValue: '7.7',
-                                  oxValue: '95',
-                                  stepsValue: value['activity'] != null
-                                      ? value['activity']!.toStringAsFixed(2)
-                                      : '0',
-                                  restBpmValue: value['resting_bpm'] != null
-                                      ? value['resting_bpm']!.toStringAsFixed(2)
-                                      : '0',
-                                  calories: value['calories_expended'] != null
-                                      ? value['calories_expended']!
-                                          .toStringAsFixed(2)
-                                      : '0',
-                                ),
-                              ));
-                              index += 1;
-                            });
-                          case 'Semanas':
-                            filterInfo = await getWeeklyInfo();
-                            int index = 0;
-
-                            filterInfo.forEach((key, value) {
-                              DateTime date = DateTime.now()
-                                  .add(Duration(days: -index * 8));
-                              var endDate = DateTime(
-                                  date.year, date.month, date.day, 23, 59, 59);
-                              var startDate = DateTime(endDate.year,
-                                      endDate.month, endDate.day, 0, 1, 0)
-                                  .add(const Duration(days: -7));
-
-                              widgetListTemp.add(GestureDetector(
-                                onTap: () async {
-                                  Map<String, Map<String, double>> data =
-                                      await report.getWeeklyDataGroupedByDay(
-                                          Provider.of<CurrentUser>(context,
-                                                  listen: false)
-                                              .email,
-                                          startDate,
-                                          endDate);
-
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            HistoryStatsPageWeekly(
-                                          title: key,
-                                          data: data,
-                                        ),
-                                      ));
-                                },
-                                child: HistoryCardWidget(
-                                  title: key,
-                                  bpmValue: value['heart_rate'] != null
-                                      ? value['heart_rate']!.toStringAsFixed(2)
-                                      : '0',
-                                  sleepValue: '7.7',
-                                  oxValue: '95',
-                                  stepsValue: value['activity'] != null
-                                      ? value['activity']!.toStringAsFixed(2)
-                                      : '0',
-                                  restBpmValue: value['resting_bpm'] != null
-                                      ? value['resting_bpm']!.toStringAsFixed(2)
-                                      : '0',
-                                  calories: value['calories_expended'] != null
-                                      ? value['calories_expended']!
-                                          .toStringAsFixed(2)
-                                      : '0',
-                                ),
-                              ));
-                              index += 1;
-                            });
-                          case 'Meses':
-                            filterInfo = await getMonthlyInfo();
-                            int index = 0;
-
-                            filterInfo.forEach((key, value) {
-                              DateTime date = DateTime.now()
-                                  .add(Duration(days: -index * 30));
-                              DateTime endDayOfMonth =
-                                  DateTime(date.year, date.month + 1, 0);
-
-                              var endDate = DateTime(
-                                  endDayOfMonth.year,
-                                  endDayOfMonth.month,
-                                  endDayOfMonth.day,
-                                  23,
-                                  59,
-                                  59);
-                              var startDate = DateTime(
-                                  endDate.year, endDate.month, 1, 0, 1, 0);
-
-                              if (endDate.isAfter(DateTime.now())) {
-                                endDate = DateTime.now();
-                              }
-
-                              widgetListTemp.add(GestureDetector(
-                                onTap: () async {
-                                  Map<String, Map<String, double>> data =
-                                      await report.getMonthlyDataGroupedByWeek(
-                                          Provider.of<CurrentUser>(context,
-                                                  listen: false)
-                                              .email,
-                                          startDate,
-                                          endDate);
-
-                                  print('key: $key');
-                                  print('start: $startDate, end: $endDate');
-                                  print(data);
-
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            HistoryStatsPageMonthly(
-                                          title: key,
-                                          data: data,
-                                        ),
-                                      ));
-                                },
-                                child: HistoryCardWidget(
-                                  title: key,
-                                  bpmValue: value['heart_rate'] != null
-                                      ? value['heart_rate']!.toStringAsFixed(2)
-                                      : '0',
-                                  sleepValue: '7.7',
-                                  oxValue: '95',
-                                  stepsValue: value['activity'] != null
-                                      ? value['activity']!.toStringAsFixed(2)
-                                      : '0',
-                                  restBpmValue: value['resting_bpm'] != null
-                                      ? value['resting_bpm']!.toStringAsFixed(2)
-                                      : '0',
-                                  calories: value['calories_expended'] != null
-                                      ? value['calories_expended']!
-                                          .toStringAsFixed(2)
-                                      : '0',
-                                ),
-                              ));
-                              index += 1;
-                            });
-                        }
-
                         setState(() {
-                          widgetList = [];
-
-                          widgetList = widgetListTemp;
                           _selectedScale = newValue!;
                         });
                       },
@@ -340,7 +273,7 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  Future<Map<String, Map<String, double>>> getDailyInfo() async {
+  Future<Map<String, Map<String, double>>> getDailyInfo(String email) async {
     Map<String, Map<String, double>> weekDayInfo = {};
     Map<String, Map<String, double>> dailyData =
         await report.getDailyAverageData(email, start, end);
@@ -358,7 +291,7 @@ class _HistoryPageState extends State<HistoryPage> {
     return weekDayInfo;
   }
 
-  Future<Map<String, Map<String, double>>> getWeeklyInfo() async {
+  Future<Map<String, Map<String, double>>> getWeeklyInfo(String email) async {
     Map<String, Map<String, double>> weekDataResult = {};
     Map<String, Map<String, double>> weeklyData =
         await report.getWeeklyAverageData(email, start, end);
@@ -376,7 +309,7 @@ class _HistoryPageState extends State<HistoryPage> {
     return weekDataResult;
   }
 
-  Future<Map<String, Map<String, double>>> getMonthlyInfo() async {
+  Future<Map<String, Map<String, double>>> getMonthlyInfo(String email) async {
     Map<String, Map<String, double>> monthDataResult = {};
 
     DateTime now = DateTime.now();
@@ -397,4 +330,12 @@ class _HistoryPageState extends State<HistoryPage> {
 
     return monthDataResult;
   }
+}
+
+DateTime getSundayOfCurrentWeek() {
+  DateTime now = DateTime.now();
+  int currentDayOfWeek = now.weekday;
+  int differenceToSunday = DateTime.sunday - currentDayOfWeek;
+  DateTime nextSunday = now.add(Duration(days: differenceToSunday));
+  return DateTime.utc(nextSunday.year, nextSunday.month, nextSunday.day);
 }
