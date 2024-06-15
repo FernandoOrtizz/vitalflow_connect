@@ -137,7 +137,7 @@ class HeartRate implements Destination, VitalFlowRepository {
 
       return averageData;
     } catch (e) {
-      throw Exception('Could not get calories from Google Fit. $e');
+      throw Exception('Could not get heart Rate from Google Fit. $e');
     }
   }
 

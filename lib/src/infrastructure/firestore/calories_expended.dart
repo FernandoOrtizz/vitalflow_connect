@@ -117,12 +117,13 @@ class CaloriesExpended implements Destination, VitalFlowRepository {
       }
 
       data.forEach((key, value) {
-        String startDate = DateFormat('yMMMMEEEEd').format(value[0]['date']);
+        String startDate =
+            DateFormat('MMMM d', 'es_ES').format(value[0]['date']);
+        // startDate = translateMonth[startDate]
 
-        String endDate =
-            DateFormat('yMMMMEEEEd').format(value[value.length - 1]['date']);
+        String endDate = DateFormat('MMMM d', 'es_ES').format(value[0]['date']);
 
-        String dateRange = 'From $startDate to $endDate';
+        String dateRange = '$startDate - $endDate';
 
         dateFormatedData[dateRange] = value;
       });

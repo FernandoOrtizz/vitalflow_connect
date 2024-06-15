@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:vitalflow_connect/src/application/report/ports.dart';
 import 'package:vitalflow_connect/src/application/sync/ports.dart';
 import 'package:intl/intl.dart';
@@ -30,8 +31,6 @@ class Activity implements Destination, VitalFlowRepository {
         var doc = querySnapshot.docs.first;
         // Acceder a los datos del documento
         data = doc.data() as Map<String, dynamic>;
-        print('Registro más reciente de pasos:');
-        print(data);
       } else {
         print('No hay registros de pasos.');
       }
@@ -87,6 +86,7 @@ class Activity implements Destination, VitalFlowRepository {
   Future<Map<String, double>> getWeeklyAverageData(
       String email, DateTime startDate, DateTime endDate) async {
     try {
+      print('$startDate ------ $endDate');
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("steps")
           .where("userEmail", isEqualTo: email)
@@ -113,12 +113,17 @@ class Activity implements Destination, VitalFlowRepository {
       }
 
       data.forEach((key, value) {
-        String startDate = DateFormat('yMMMMEEEEd').format(value[0]['date']);
+        Map<String, DateTime> weekStartEndDate =
+            getStartAndEndDateOfWeek(int.parse(key), 2024);
 
-        String endDate =
-            DateFormat('yMMMMEEEEd').format(value[value.length - 1]['date']);
+        String startDate = DateFormat('MMMM d', 'es_ES')
+            .format(weekStartEndDate['startOfWeek'] ?? DateTime.now());
+        // startDate = translateMonth[startDate]
 
-        String dateRange = '$startDate a $endDate';
+        String endDate = DateFormat('MMMM d', 'es_ES')
+            .format(weekStartEndDate['endOfWeek'] ?? DateTime.now());
+
+        String dateRange = '$startDate - $endDate';
 
         dateFormatedData[dateRange] = value;
       });
@@ -340,4 +345,21 @@ int weeksBetween(DateTime from, DateTime to) {
   from = DateTime.utc(from.year, from.month, from.day);
   to = DateTime.utc(to.year, to.month, to.day);
   return (to.difference(from).inDays / 7).ceil();
+}
+
+Map<String, DateTime> getStartAndEndDateOfWeek(int weekNumber, int year) {
+  // Encuentra el primer día del año
+  DateTime firstDayOfYear = DateTime.utc(year);
+  // Encuentra el primer lunes del año
+  DateTime firstMonday =
+      firstDayOfYear.add(Duration(days: (8 - firstDayOfYear.weekday) % 7));
+  // Calcula la fecha de inicio de la semana dada
+  DateTime startOfWeek = firstMonday.add(Duration(days: (weekNumber - 1) * 7));
+  // Calcula la fecha de fin de la semana
+  DateTime endOfWeek = startOfWeek.add(Duration(days: 6));
+
+  return {
+    'startOfWeek': startOfWeek,
+    'endOfWeek': endOfWeek,
+  };
 }

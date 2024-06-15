@@ -38,42 +38,10 @@ class _HistoryPageState extends State<HistoryPage> {
 
   List<Widget> widgetList = [];
 
+  Future<Map<String, Map<String, double>>>? _myData;
+
   @override
   void initState() {
-    super.initState();
-    // initialCards();
-    initData();
-  }
-
-  void initialCards() async {
-    var dailyInfo = await getDailyInfo();
-
-    dailyInfo.forEach((key, value) {
-      widgetList.add(GestureDetector(
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HistoryStatsPage(
-                  title: key,
-                  data: {},
-                ),
-              ));
-        },
-        child: const HistoryCardWidget(
-          title: 'Jueves',
-          bpmValue: '116',
-          sleepValue: '7.7',
-          oxValue: '95',
-          stepsValue: '1094',
-          restBpmValue: '46',
-          calories: '120/80',
-        ),
-      ));
-    });
-  }
-
-  void initData() async {
     List<VitalFlowRepository> repositories = <VitalFlowRepository>[
       Activity(),
       CaloriesExpended(),
@@ -82,10 +50,64 @@ class _HistoryPageState extends State<HistoryPage> {
     ];
 
     report = Report(repositories);
+
+    _myData = getDailyInfo();
+
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(future: _myData, builder: _buildFuture);
+  }
+
+  Widget _buildFuture(BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+    if (snapshot.hasData && widgetList.isEmpty) {
+      int index = 0;
+      snapshot.data.forEach((key, value) {
+        DateTime date = DateTime.now().add(Duration(days: -index));
+        var startDate = DateTime(date.year, date.month, date.day, 0, 1, 0);
+        var endDate = DateTime(date.year, date.month, date.day, 23, 59, 59);
+
+        widgetList.add(GestureDetector(
+          onTap: () async {
+            Map<String, List<double>> data =
+                await report.getDailyDataGroupedByHour(
+                    Provider.of<CurrentUser>(context, listen: false).email,
+                    startDate,
+                    endDate);
+
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HistoryStatsPage(
+                    title: key,
+                    data: data,
+                  ),
+                ));
+          },
+          child: HistoryCardWidget(
+            title: key,
+            bpmValue: value['heart_rate'] != null
+                ? value['heart_rate']!.toStringAsFixed(2)
+                : '0',
+            sleepValue: '7.7',
+            oxValue: '95',
+            stepsValue: value['activity'] != null
+                ? value['activity']!.toStringAsFixed(2)
+                : '0',
+            restBpmValue: value['resting_bpm'] != null
+                ? value['resting_bpm']!.toStringAsFixed(2)
+                : '0',
+            calories: value['calories_expended'] != null
+                ? value['calories_expended']!.toStringAsFixed(2)
+                : '0',
+          ),
+        ));
+        index += 1;
+      });
+    }
+
     return Scaffold(
       appBar: CustomAppBar(context: context),
       body: Padding(
