@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginPage> {
                   child: Row(
                     children: [
                       Text(
-                        'VitalFlow Connect login',
+                        'VitalFlow Connect',
                         style: TextStyle(
                           color: Color(0xFF755DC1),
                           fontSize: 27,

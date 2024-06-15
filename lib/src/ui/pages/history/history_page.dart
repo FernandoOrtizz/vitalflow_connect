@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:vitalflow_connect/src/application/report/ports.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/activity.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/calories_expended.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/heart_rate.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/resting_heart_rate.dart';
+import 'package:vitalflow_connect/src/provider/user.dart';
 import 'package:vitalflow_connect/src/ui/pages/history/history_stats_page.dart';
 import 'package:vitalflow_connect/src/ui/pages/history/history_stats_page_monthly.dart';
 import 'package:vitalflow_connect/src/ui/pages/history/history_stats_page_weekly.dart';
@@ -119,9 +121,9 @@ class _HistoryPageState extends State<HistoryPage> {
                                 onTap: () async {
                                   Map<String, List<double>> data =
                                       await report.getDailyDataGroupedByHour(
-                                          FirebaseAuth.instance.currentUser
-                                                  ?.email ??
-                                              '',
+                                          Provider.of<CurrentUser>(context,
+                                                  listen: false)
+                                              .email,
                                           startDate,
                                           endDate);
 
@@ -172,9 +174,9 @@ class _HistoryPageState extends State<HistoryPage> {
                                 onTap: () async {
                                   Map<String, Map<String, double>> data =
                                       await report.getWeeklyDataGroupedByDay(
-                                          FirebaseAuth.instance.currentUser
-                                                  ?.email ??
-                                              '',
+                                          Provider.of<CurrentUser>(context,
+                                                  listen: false)
+                                              .email,
                                           startDate,
                                           endDate);
 
@@ -237,9 +239,9 @@ class _HistoryPageState extends State<HistoryPage> {
                                 onTap: () async {
                                   Map<String, Map<String, double>> data =
                                       await report.getMonthlyDataGroupedByWeek(
-                                          FirebaseAuth.instance.currentUser
-                                                  ?.email ??
-                                              '',
+                                          Provider.of<CurrentUser>(context,
+                                                  listen: false)
+                                              .email,
                                           startDate,
                                           endDate);
 

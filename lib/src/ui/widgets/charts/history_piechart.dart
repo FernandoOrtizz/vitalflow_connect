@@ -3,17 +3,34 @@ import 'package:flutter/material.dart';
 
 class HistoryPieChart extends StatefulWidget {
   final Map<String, double> data;
+  final String title;
+  final Icon icon;
+  final Color color;
 
-  const HistoryPieChart({super.key, required this.data});
+  const HistoryPieChart(
+      {super.key,
+      required this.data,
+      required this.title,
+      required this.icon,
+      required this.color});
 
   @override
   // ignore: no_logic_in_create_state
-  State<StatefulWidget> createState() => HistoryPieChartState(weekData: data);
+  State<StatefulWidget> createState() => HistoryPieChartState(
+      weekData: data, title: title, icon: icon, color: color);
 }
 
 class HistoryPieChartState extends State {
   Map<String, double> weekData = {};
-  HistoryPieChartState({required this.weekData});
+  String? title;
+  Icon? icon;
+  Color? color;
+
+  HistoryPieChartState(
+      {required this.weekData,
+      required this.title,
+      required this.color,
+      required this.icon});
   Map<int, MaterialColor> colorByIndex = {
     0: Colors.blue,
     1: Colors.orange,
@@ -47,12 +64,29 @@ class HistoryPieChartState extends State {
     });
 
     return AspectRatio(
-      aspectRatio: 1.3,
+      aspectRatio: 1,
       child: Center(
         child: Column(
           children: <Widget>[
-            const SizedBox(
-              height: 18,
+            SizedBox(
+              height: 30,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                icon!,
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  title ?? '',
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             Expanded(
               child: AspectRatio(
@@ -111,7 +145,7 @@ class HistoryPieChartState extends State {
       return PieChartSectionData(
         color: colorByIndex[i] ?? Colors.blue,
         value: weekDataMap.values.toList()[i].toDouble(),
-        title: weekDataMap.keys.toList()[i],
+        title: weekDataMap.values.toList()[i].toStringAsFixed(2),
         radius: radius,
         titleStyle: TextStyle(
           fontSize: fontSize,
