@@ -27,19 +27,51 @@ class HistoryStatsPageMonthly extends StatelessWidget {
               const SizedBox(
                 height: 40,
               ),
-              HistoryPieChart(data: data['heart_rate'] ?? {}),
+              HistoryPieChart(
+                data: data['heart_rate'] ?? {},
+                title: "Ritmo cardíaco/semana",
+                icon: Icon(
+                  Icons.favorite,
+                  color: Colors.pink.shade100,
+                ),
+                color: Colors.pink.shade100,
+              ),
               const SizedBox(
                 height: 10,
               ),
-              HistoryPieChart(data: data['resting_bpm'] ?? {}),
+              HistoryPieChart(
+                data: data['resting_bpm'] ?? {},
+                title: "Ritmo cardíaco en reposo/semana",
+                icon: Icon(
+                  Icons.favorite_border_rounded,
+                  color: Colors.pink.shade100,
+                ),
+                color: Colors.pink.shade100,
+              ),
               const SizedBox(
                 height: 10,
               ),
-              HistoryPieChart(data: data['activity'] ?? {}),
+              HistoryPieChart(
+                data: data['activity'] ?? {},
+                title: "Cantidad de pasos/semana ",
+                icon: Icon(
+                  Icons.directions_walk_rounded,
+                  color: Colors.green.shade300,
+                ),
+                color: Colors.green.shade300,
+              ),
               const SizedBox(
                 height: 10,
               ),
-              HistoryPieChart(data: data['calories_expended'] ?? {}),
+              HistoryPieChart(
+                data: data['calories_expended'] ?? {},
+                title: " Energía gastada/semana",
+                icon: Icon(
+                  Icons.battery_charging_full_rounded,
+                  color: Colors.orange.shade300,
+                ),
+                color: Colors.orange.shade300,
+              ),
               const SizedBox(
                 height: 10,
               ),

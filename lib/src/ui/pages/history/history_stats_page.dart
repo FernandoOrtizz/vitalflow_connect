@@ -28,48 +28,48 @@ class HistoryStatsPage extends StatelessWidget {
                 height: 40,
               ),
               HistoryBarchart(
-                title: "Ritmo cardíaco por hora",
+                title: "Ritmo cardíaco/hora",
                 icon: Icon(
-                  Icons.monitor_heart_outlined,
-                  color: Colors.green.shade700,
+                  Icons.favorite,
+                  color: Colors.pink.shade100,
                 ),
-                color: Colors.green.shade700,
+                color: Colors.pink.shade100,
                 dataPerHour: data["heart_rate"]!,
               ),
               const SizedBox(
                 height: 10,
               ),
               HistoryBarchart(
-                title: "Descanso - Ritmo cardíaco por hora",
+                title: "Ritmo cardíaco en reposo/hora",
                 icon: Icon(
-                  Icons.monitor_heart_outlined,
-                  color: Colors.green.shade700,
+                  Icons.favorite_border_rounded,
+                  color: Colors.pink.shade100,
                 ),
-                color: Colors.green.shade700,
+                color: Colors.pink.shade100,
                 dataPerHour: data["resting_bpm"]!,
               ),
               const SizedBox(
                 height: 10,
               ),
               HistoryBarchart(
-                title: "Cantidad de pasos por hora",
+                title: "Cantidad de pasos/hora ",
                 icon: Icon(
-                  Icons.monitor_heart_outlined,
-                  color: Colors.green.shade700,
+                  Icons.directions_walk_rounded,
+                  color: Colors.green.shade300,
                 ),
-                color: Colors.green.shade700,
+                color: Colors.green.shade300,
                 dataPerHour: data["activity"]!,
               ),
               const SizedBox(
                 height: 10,
               ),
               HistoryBarchart(
-                title: " calorias quemadas por hora",
+                title: " Energía gastada/hora",
                 icon: Icon(
-                  Icons.monitor_heart_outlined,
-                  color: Colors.green.shade700,
+                  Icons.battery_charging_full_rounded,
+                  color: Colors.orange.shade300,
                 ),
-                color: Colors.green.shade700,
+                color: Colors.orange.shade300,
                 dataPerHour: data["calories_expended"]!,
               ),
               const SizedBox(
