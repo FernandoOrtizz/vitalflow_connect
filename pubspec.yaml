@@ -35,6 +35,8 @@ dependencies:
   googleapis: ^13.1.0
   googleapis_auth: ^1.5.1
   http: ^1.2.1
+  qr_flutter: ^4.1.0
+  qrscan: ^0.3.3
 
   flutter:
     sdk: flutter

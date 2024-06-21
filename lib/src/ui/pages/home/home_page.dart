@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:googleapis/admin/directory_v1.dart';
 import 'package:provider/provider.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/activity.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/calories_expended.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/heart_rate.dart';
+import 'package:vitalflow_connect/src/infrastructure/firestore/monitoring_permission.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/resting_heart_rate.dart';
 import 'package:vitalflow_connect/src/infrastructure/google_signin/signin.dart';
 import 'package:vitalflow_connect/src/provider/user.dart';
@@ -20,13 +23,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future<List<Map<String, dynamic>>>? userToMonitor;
+
   @override
   Widget build(BuildContext context) {
+    userToMonitor = MonitoringPermission()
+        .getUserPermissions(FirebaseAuth.instance.currentUser?.email ?? '');
+
+    return FutureBuilder(future: userToMonitor, builder: _buildFuture);
+  }
+
+  Widget _buildFuture(BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+    if (!snapshot.hasData) {
+      return const Scaffold();
+    }
+
+    // context.watch<CurrentUser>().allowedUsersToMonitor = snapshot.data;
+
     final controller = HomeController(
         googleAuthService: context.watch<GoogleAuth>(),
         email: context.watch<CurrentUser>().email);
+
     return Scaffold(
-      appBar: CustomAppBar(context: context),
+      appBar: CustomAppBar(usersToMonitor: snapshot.data, context: context),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {
           controller.getData(),

@@ -57,7 +57,8 @@ class MonitoringPermission {
     }
   }
 
-  Future<void> postUserPermissions(String email) async {
+  Future<void> postUserPermissions(String uid) async {
+    var userInfo = await getUserToConnectEmail(uid);
     try {
       CollectionReference users =
           FirebaseFirestore.instance.collection('monitoring_permissions');
@@ -65,11 +66,11 @@ class MonitoringPermission {
       Map<String, dynamic> data = {
         'monitoring_permissions': [
           {
-            'mail': FirebaseAuth.instance.currentUser?.email,
-            'name': FirebaseAuth.instance.currentUser?.displayName,
+            'mail': userInfo['email'],
+            'name': userInfo['displayName'],
           }
         ],
-        'user_id': email,
+        'user_id': FirebaseAuth.instance.currentUser?.email,
       };
 
       // Agregar los datos a Firestore
@@ -79,6 +80,16 @@ class MonitoringPermission {
     } catch (e) {
       print('Error al agregar los datos: $e');
     }
+  }
+
+  Future<Map<String, dynamic>> getUserToConnectEmail(String uid) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where("userUID", isEqualTo: uid)
+        .get();
+
+    var userInfo = querySnapshot.docs.first.data();
+    return userInfo as Map<String, dynamic>;
   }
 }
 
