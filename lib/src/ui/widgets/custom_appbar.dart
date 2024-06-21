@@ -3,16 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vitalflow_connect/src/provider/drop_down_provider.dart';
 import 'package:vitalflow_connect/src/provider/user.dart';
+import 'package:vitalflow_connect/src/ui/pages/home/get_user_code_page.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/home_page.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/set_permissions.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final BuildContext context;
+  List<Map<String, dynamic>> usersToMonitor = [];
 
-  const CustomAppBar({Key? key, required this.context}) : super(key: key);
+  CustomAppBar({Key? key, required this.usersToMonitor, required this.context})
+      : super(key: key);
 
   @override
-  _CustomAppBarState createState() => _CustomAppBarState(this.context);
+  _CustomAppBarState createState() =>
+      _CustomAppBarState(this.context, usersToMonitor);
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -27,8 +31,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
     {'name': 'Mis datos', 'mail': FirebaseAuth.instance.currentUser?.email},
   ];
 
-  _CustomAppBarState(BuildContext context) {
-    options.addAll(context.watch<CurrentUser>().allowedUsersToMonitor);
+  _CustomAppBarState(
+      BuildContext context, List<Map<String, dynamic>> usersToMonitor) {
+    options.addAll(usersToMonitor);
+    print('DROPDOWN: $options');
   }
 
   @override
@@ -70,6 +76,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
         }
 
         if (newValue == 'Generar token') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GetUserCode(),
+            ),
+          );
           return;
         }
 

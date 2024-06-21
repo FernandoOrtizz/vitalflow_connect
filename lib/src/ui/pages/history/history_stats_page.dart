@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vitalflow_connect/src/provider/user.dart';
 import 'package:vitalflow_connect/src/ui/widgets/custom_appbar.dart';
 import 'package:vitalflow_connect/src/ui/widgets/charts/history_barchart.dart';
 
@@ -12,7 +14,9 @@ class HistoryStatsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(context: context),
+      appBar: CustomAppBar(
+          usersToMonitor: context.watch<CurrentUser>().allowedUsersToMonitor,
+          context: context),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(

@@ -226,7 +226,9 @@ class _HistoryPageState extends State<HistoryPage> {
     }
 
     return Scaffold(
-      appBar: CustomAppBar(context: context),
+      appBar: CustomAppBar(
+          usersToMonitor: context.watch<CurrentUser>().allowedUsersToMonitor,
+          context: context),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(

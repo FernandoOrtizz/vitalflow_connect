@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
@@ -75,6 +76,11 @@ class _LoginScreenState extends State<LoginPage> {
                               await MonitoringPermission().getUserPermissions(
                                   FirebaseAuth.instance.currentUser?.email ??
                                       '');
+                          saveUser(
+                              FirebaseAuth.instance.currentUser!.uid,
+                              FirebaseAuth.instance.currentUser?.email ?? '',
+                              FirebaseAuth.instance.currentUser?.displayName ??
+                                  '');
 
                           if (!context.mounted) return;
                           Navigator.pushReplacement(
@@ -96,5 +102,39 @@ class _LoginScreenState extends State<LoginPage> {
         ),
       ),
     );
+  }
+}
+
+Future<bool> validateUser(String uid) async {
+  QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+      .collection("users")
+      .where("userUID", isEqualTo: uid)
+      .get();
+
+  if (querySnapshot.docs.isEmpty) {
+    print("VALIDATE FALSE");
+
+    return false;
+  }
+
+  print("VALIDATE True");
+
+  return true;
+}
+
+void saveUser(String uid, String email, String displayName) async {
+  if (!await validateUser(uid)) {
+    Map<String, String> data = {
+      'userUID': uid,
+      'email': email,
+      'displayName': displayName
+    };
+
+    try {
+      await FirebaseFirestore.instance.collection("users").add(data);
+      return Future.value();
+    } catch (e) {
+      return Future.error(e);
+    }
   }
 }
