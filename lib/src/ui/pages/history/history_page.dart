@@ -76,9 +76,6 @@ class _HistoryPageState extends State<HistoryPage> {
     if (snapshot.hasData) {
       widgetList = [];
 
-      print('SNAPSHOT?: ');
-      print(snapshot.data);
-
       switch (_selectedScale) {
         case 'Días':
           int index = 0;

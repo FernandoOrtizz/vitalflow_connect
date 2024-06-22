@@ -271,7 +271,8 @@ class CaloriesExpended implements Destination, VitalFlowRepository {
       if (weekEndDate.isBefore(startDate)) {
         continue;
       }
-      String weekEndDateFormat = DateFormat('yMMMMEEEEd').format(weekEndDate);
+      String weekEndDateFormat =
+          DateFormat('MMMM d', 'es_ES').format(weekEndDate);
 
       DateTime weekStartDate = weekEndDate.add(const Duration(days: -7));
       if (weekStartDate.isBefore(startDate)) {
@@ -279,7 +280,7 @@ class CaloriesExpended implements Destination, VitalFlowRepository {
       }
 
       String weekStartDateFormat =
-          DateFormat('yMMMMEEEEd').format(weekStartDate);
+          DateFormat('MMMM d', 'es_ES').format(weekStartDate);
 
       tempValuePerWeek['$weekStartDateFormat - $weekEndDateFormat'] = {
         'startDate': weekStartDate,

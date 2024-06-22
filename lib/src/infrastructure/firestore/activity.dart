@@ -229,7 +229,6 @@ class Activity implements Destination, VitalFlowRepository {
   @override
   Future<Map<String, double>> getWeeklyDataGroupedByDay(
       String email, DateTime startDate, DateTime endDate) async {
-    print('FECHAS2 - $startDate -- $endDate');
     Map<String, double> valuePerDay = {};
 
     for (var i = 0; i < 7; i++) {
@@ -260,8 +259,6 @@ class Activity implements Destination, VitalFlowRepository {
       throw Exception('Could not get steps from Google Fit. $e');
     }
 
-    print('Valor por día=== $valuePerDay');
-
     return valuePerDay;
   }
 
@@ -276,7 +273,8 @@ class Activity implements Destination, VitalFlowRepository {
       if (weekEndDate.isBefore(startDate)) {
         continue;
       }
-      String weekEndDateFormat = DateFormat('yMMMMEEEEd').format(weekEndDate);
+      String weekEndDateFormat =
+          DateFormat('MMMM d', 'es_ES').format(weekEndDate);
 
       DateTime weekStartDate = weekEndDate.add(const Duration(days: -7));
       if (weekStartDate.isBefore(startDate)) {
@@ -284,7 +282,7 @@ class Activity implements Destination, VitalFlowRepository {
       }
 
       String weekStartDateFormat =
-          DateFormat('yMMMMEEEEd').format(weekStartDate);
+          DateFormat('MMMM d', 'es_ES').format(weekStartDate);
 
       tempValuePerWeek['$weekStartDateFormat - $weekEndDateFormat'] = {
         'startDate': weekStartDate,

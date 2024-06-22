@@ -10,6 +10,8 @@ import 'package:vitalflow_connect/src/ui/widgets/bottom_menu.dart';
 import 'package:vitalflow_connect/src/ui/widgets/custom_appbar.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
+import '../../../provider/drop_down_provider.dart';
+
 class SetPermissions extends StatefulWidget {
   SetPermissions({Key? key}) : super(key: key);
 
@@ -87,6 +89,9 @@ class _SetPermissionsState extends State<SetPermissions> {
                 final String code = _controller.text;
                 await MonitoringPermission().postUserPermissions(code);
                 _controller.clear();
+
+                context.read<DorpDownProvider>().dropDownEmail =
+                    FirebaseAuth.instance.currentUser?.email ?? '';
 
                 Navigator.pushReplacement(
                   context,
