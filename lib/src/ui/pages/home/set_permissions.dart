@@ -88,12 +88,7 @@ class _SetPermissionsState extends State<SetPermissions> {
                 await MonitoringPermission().postUserPermissions(code);
                 _controller.clear();
 
-                // context.read<CurrentUser>().allowedUsersToMonitor =
-                //     await MonitoringPermission().getUserPermissions(
-                //         FirebaseAuth.instance.currentUser?.email ?? '');
-
                 Navigator.pushReplacement(
-                  // ignore: use_build_context_synchronously
                   context,
                   MaterialPageRoute(
                     builder: (context) => const HomePage(),

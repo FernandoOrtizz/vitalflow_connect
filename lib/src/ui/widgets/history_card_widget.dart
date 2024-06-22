@@ -57,7 +57,7 @@ class HistoryCardWidget extends StatelessWidget {
                 _buildSmallValueColumn(Icons.directions_walk_rounded,
                     stepsValue, '', Colors.green.shade300),
                 _buildSmallValueColumn(Icons.favorite_border_rounded,
-                    restBpmValue ?? '', '%', Colors.pink.shade100),
+                    restBpmValue ?? '', '', Colors.pink.shade100),
                 _buildSmallValueColumn(Icons.battery_charging_full_rounded,
                     calories ?? '', '', Colors.orange.shade300),
               ],

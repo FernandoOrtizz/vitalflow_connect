@@ -41,6 +41,7 @@ class Activity implements Destination, VitalFlowRepository {
     }
   }
 
+  @override
   Future<Map<String, double>> getDailyAverageData(
       String email, DateTime startDate, DateTime endDate) async {
     try {
@@ -83,10 +84,10 @@ class Activity implements Destination, VitalFlowRepository {
     }
   }
 
+  @override
   Future<Map<String, double>> getWeeklyAverageData(
       String email, DateTime startDate, DateTime endDate) async {
     try {
-      print('$startDate ------ $endDate');
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("steps")
           .where("userEmail", isEqualTo: email)
@@ -136,14 +137,13 @@ class Activity implements Destination, VitalFlowRepository {
         averageData[key] = average;
       });
 
-      print('DATA: $averageData');
-
       return averageData;
     } catch (e) {
       throw Exception('Could not get steps from Google Fit. $e');
     }
   }
 
+  @override
   Future<Map<String, double>> getMonthlyAverageData(
       String email, DateTime startDate, DateTime endDate) async {
     try {
@@ -187,10 +187,12 @@ class Activity implements Destination, VitalFlowRepository {
     }
   }
 
+  @override
   String getVitalFlowName() {
     return 'activity';
   }
 
+  @override
   Future<List<double>> getDailyDataGroupedByHour(
       String email, DateTime startDate, DateTime endDate) async {
     List<double> valuePerHour = [];
@@ -224,9 +226,10 @@ class Activity implements Destination, VitalFlowRepository {
     return valuePerHour;
   }
 
+  @override
   Future<Map<String, double>> getWeeklyDataGroupedByDay(
       String email, DateTime startDate, DateTime endDate) async {
-    print('FECHAS - $startDate -- $endDate');
+    print('FECHAS2 - $startDate -- $endDate');
     Map<String, double> valuePerDay = {};
 
     for (var i = 0; i < 7; i++) {
@@ -262,6 +265,7 @@ class Activity implements Destination, VitalFlowRepository {
     return valuePerDay;
   }
 
+  @override
   Future<Map<String, double>> getMonthDataGroupedByWeek(
       String email, DateTime startDate, DateTime endDate) async {
     Map<String, double> valuePerWeek = {};
