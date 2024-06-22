@@ -17,8 +17,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
       : super(key: key);
 
   @override
-  _CustomAppBarState createState() =>
-      _CustomAppBarState(this.context, usersToMonitor);
+  _CustomAppBarState createState() => _CustomAppBarState(context: this.context);
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -28,46 +27,42 @@ class _CustomAppBarState extends State<CustomAppBar> {
   String selectedOption = 'Mis datos';
   List<Map<String, dynamic>> usersTemp = [];
 
-  List<Map<String, dynamic>> options = [];
+  final BuildContext context;
 
-  _CustomAppBarState(
-      BuildContext context, List<Map<String, dynamic>> usersToMonitor) {
-    usersTemp = usersToMonitor;
-  }
+  _CustomAppBarState({required this.context});
 
   @override
   Widget build(BuildContext context) {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      title: const Text('VitalFlow'),
+      actions: [
+        _buildFuture(context),
+      ],
+    );
+  }
+
+  Widget _buildFuture(BuildContext context) {
     return FutureBuilder(
         future: MonitoringPermission()
             .getUserPermissions(FirebaseAuth.instance.currentUser?.email ?? ''),
-        builder: _buildFuture);
+        builder: _buildFutureItems);
   }
 
-  Widget _buildFuture(BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+  Widget _buildFutureItems(
+      BuildContext context, AsyncSnapshot<dynamic> snapshot) {
     if (!snapshot.hasData) {
-      return AppBar();
+      return const Text('Cargando...');
     }
 
-    options = [
+    List<Map<String, dynamic>> options = [
       {'name': 'Ingresar token', 'mail': 'Ingresar token'},
       {'name': 'Generar token', 'mail': 'Generar token'},
       {'name': 'Mis datos', 'mail': FirebaseAuth.instance.currentUser?.email},
     ];
 
     options.addAll(snapshot.data);
-    print('SNAPSHOT: $options');
-    print('OPTIONS: $options');
 
-    return AppBar(
-      automaticallyImplyLeading: false,
-      title: const Text('VitalFlow'),
-      actions: [
-        _buildDropdownButton(context),
-      ],
-    );
-  }
-
-  Widget _buildDropdownButton(BuildContext context) {
     DorpDownProvider actualDropDownState =
         Provider.of<DorpDownProvider>(context, listen: false);
 

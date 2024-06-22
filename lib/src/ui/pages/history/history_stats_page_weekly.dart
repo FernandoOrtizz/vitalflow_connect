@@ -14,6 +14,7 @@ class HistoryStatsPageWeekly extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('HISTORY: $data');
     return Scaffold(
       appBar: CustomAppBar(
           usersToMonitor: context.watch<CurrentUser>().allowedUsersToMonitor,

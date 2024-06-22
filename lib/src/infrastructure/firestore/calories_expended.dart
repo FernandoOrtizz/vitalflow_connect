@@ -240,8 +240,8 @@ class CaloriesExpended implements Destination, VitalFlowRepository {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("calories_expended")
           .where("userEmail", isEqualTo: email)
-          .where("date", isLessThan: startDate)
-          .where("date", isGreaterThan: endDate)
+          .where("date", isLessThan: endDate)
+          .where("date", isGreaterThan: startDate)
           .orderBy("date", descending: true)
           .get();
 

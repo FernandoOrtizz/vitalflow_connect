@@ -87,6 +87,7 @@ class HeartRate implements Destination, VitalFlowRepository {
   Future<Map<String, double>> getWeeklyAverageData(
       String email, DateTime startDate, DateTime endDate) async {
     try {
+      print('$startDate ------ $endDate');
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("bpm")
           .where("userEmail", isEqualTo: email)
@@ -124,7 +125,7 @@ class HeartRate implements Destination, VitalFlowRepository {
         String endDate = DateFormat('MMMM d', 'es_ES')
             .format(weekStartEndDate['endOfWeek'] ?? DateTime.now());
 
-        String dateRange = '$startDate a $endDate';
+        String dateRange = '$startDate - $endDate';
 
         dateFormatedData[dateRange] = value;
       });

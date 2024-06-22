@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -77,6 +76,9 @@ class _HistoryPageState extends State<HistoryPage> {
     if (snapshot.hasData) {
       widgetList = [];
 
+      print('SNAPSHOT?: ');
+      print(snapshot.data);
+
       switch (_selectedScale) {
         case 'Días':
           int index = 0;
@@ -122,13 +124,16 @@ class _HistoryPageState extends State<HistoryPage> {
         case 'Semanas':
           int index = 0;
           snapshot.data.forEach((key, value) {
+            DateTime endDate =
+                getSundayOfCurrentWeek().add(Duration(days: -index * 7));
+            DateTime startDate = endDate.add(const Duration(days: -6));
+
             widgetList.add(GestureDetector(
               onTap: () async {
-                DateTime now = DateTime.now().add(Duration(days: -index * 7));
-                DateTime start = now.add(const Duration(days: -6));
+                // DateTime now = DateTime.now().add(Duration(days: -index * 7));
 
-                Map<String, Map<String, double>> data =
-                    await report.getWeeklyDataGroupedByDay(_email, start, now);
+                Map<String, Map<String, double>> data = await report
+                    .getWeeklyDataGroupedByDay(_email, startDate, endDate);
 
                 Navigator.push(
                     context,
@@ -157,7 +162,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     : '0',
               ),
             ));
-            index++;
+            index += 1;
           });
         case 'Meses':
           int index = 0;

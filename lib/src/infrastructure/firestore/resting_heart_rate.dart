@@ -87,7 +87,7 @@ class RestingHeartRate implements Destination, VitalFlowRepository {
       String email, DateTime startDate, DateTime endDate) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection("bpm")
+          .collection("resting_bpm")
           .where("userEmail", isEqualTo: email)
           .where("date", isLessThan: endDate)
           .where("date", isGreaterThan: startDate)
@@ -222,6 +222,7 @@ class RestingHeartRate implements Destination, VitalFlowRepository {
     return valuePerHour;
   }
 
+  @override
   Future<Map<String, double>> getWeeklyDataGroupedByDay(
       String email, DateTime startDate, DateTime endDate) async {
     Map<String, double> valuePerDay = {};
@@ -236,8 +237,8 @@ class RestingHeartRate implements Destination, VitalFlowRepository {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("resting_bpm")
           .where("userEmail", isEqualTo: email)
-          .where("date", isLessThan: startDate)
-          .where("date", isGreaterThan: endDate)
+          .where("date", isLessThan: endDate)
+          .where("date", isGreaterThan: startDate)
           .orderBy("date", descending: true)
           .get();
 

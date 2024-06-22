@@ -32,6 +32,7 @@ class MonitoringPermission {
         for (int i = 0;
             i < permissionsModel[index].monitoring_permissions.length;
             i++) {
+          print('PERMISIONMODEL:');
           print(permissionsModel[index].monitoring_permissions[i]);
           permissions.add(permissionsModel[index].monitoring_permissions[i]);
         }
