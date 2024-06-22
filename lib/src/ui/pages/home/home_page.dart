@@ -38,7 +38,8 @@ class _HomePageState extends State<HomePage> {
       return const Scaffold();
     }
 
-    // context.watch<CurrentUser>().allowedUsersToMonitor = snapshot.data;
+    print('HOME ++++++++');
+    print(snapshot.data);
 
     final controller = HomeController(
         googleAuthService: context.watch<GoogleAuth>(),

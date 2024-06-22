@@ -32,8 +32,6 @@ class _HistoryPageState extends State<HistoryPage> {
   String _selectedScale = 'Días';
   Report report = Report([]);
 
-  DateTime start = DateTime(2024, 5, 31);
-  DateTime end = DateTime.now();
   List<Widget> widgetList = [];
 
   Future<Map<String, Map<String, double>>>? _myData;
@@ -123,18 +121,14 @@ class _HistoryPageState extends State<HistoryPage> {
           });
         case 'Semanas':
           int index = 0;
-
           snapshot.data.forEach((key, value) {
-            DateTime date = getSundayOfCurrentWeek();
-            var endDate = DateTime(date.year, date.month, date.day, 23, 59, 59);
-            var startDate =
-                DateTime(endDate.year, endDate.month, endDate.day, 0, 0, 1)
-                    .add(const Duration(days: -6));
-
             widgetList.add(GestureDetector(
               onTap: () async {
-                Map<String, Map<String, double>> data = await report
-                    .getWeeklyDataGroupedByDay(_email, startDate, endDate);
+                DateTime now = DateTime.now().add(Duration(days: -index * 7));
+                DateTime start = now.add(const Duration(days: -6));
+
+                Map<String, Map<String, double>> data =
+                    await report.getWeeklyDataGroupedByDay(_email, start, now);
 
                 Navigator.push(
                     context,
@@ -163,7 +157,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     : '0',
               ),
             ));
-            index += 1;
+            index++;
           });
         case 'Meses':
           int index = 0;
@@ -276,27 +270,35 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   Future<Map<String, Map<String, double>>> getDailyInfo(String email) async {
+    DateTime now = DateTime.now();
+    DateTime start = now.add(const Duration(days: -7));
+
     Map<String, Map<String, double>> weekDayInfo = {};
     Map<String, Map<String, double>> dailyData =
-        await report.getDailyAverageData(email, start, end);
+        await report.getDailyAverageData(email, start, now);
 
     for (var i = 0; i < 7; i++) {
       var date = DateTime.now().add(Duration(days: -i));
       var dayName = translateDay[DateFormat('EEEE').format(date)]!;
       weekDayInfo[dayName] = {};
-
-      dailyData.forEach((key, value) {
-        weekDayInfo[dayName]?.addAll({key: value[dayName] ?? 0});
-      });
     }
+
+    dailyData.forEach((key, value) {
+      value.forEach((dayName, val) {
+        weekDayInfo[dayName]?.addAll({key: val});
+      });
+    });
 
     return weekDayInfo;
   }
 
   Future<Map<String, Map<String, double>>> getWeeklyInfo(String email) async {
+    DateTime now = DateTime.now();
+    DateTime start = now.add(const Duration(days: -30));
+
     Map<String, Map<String, double>> weekDataResult = {};
     Map<String, Map<String, double>> weeklyData =
-        await report.getWeeklyAverageData(email, start, end);
+        await report.getWeeklyAverageData(email, start, now);
 
     weeklyData.forEach((vitalFlow, value) {
       value.forEach((dateRange, vitalValue) {
