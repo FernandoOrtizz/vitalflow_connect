@@ -33,7 +33,7 @@ class _SetPermissionsState extends State<SetPermissions> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-          usersToMonitor: context.watch<CurrentUser>().allowedUsersToMonitor,
+          usersToMonitor: context.read<CurrentUser>().allowedUsersToMonitor,
           context: context),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -85,17 +85,18 @@ class _SetPermissionsState extends State<SetPermissions> {
             ElevatedButton(
               onPressed: () async {
                 final String code = _controller.text;
-                MonitoringPermission().postUserPermissions(code);
+                await MonitoringPermission().postUserPermissions(code);
                 _controller.clear();
 
-                context.read<CurrentUser>().allowedUsersToMonitor =
-                    await MonitoringPermission().getUserPermissions(
-                        FirebaseAuth.instance.currentUser?.email ?? '');
+                // context.read<CurrentUser>().allowedUsersToMonitor =
+                //     await MonitoringPermission().getUserPermissions(
+                //         FirebaseAuth.instance.currentUser?.email ?? '');
 
-                Navigator.push(
+                Navigator.pushReplacement(
+                  // ignore: use_build_context_synchronously
                   context,
                   MaterialPageRoute(
-                    builder: (context) => HomePage(),
+                    builder: (context) => const HomePage(),
                   ),
                 );
               },

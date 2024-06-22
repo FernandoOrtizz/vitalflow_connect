@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:googleapis/doubleclickbidmanager/v2.dart';
 import 'package:provider/provider.dart';
+import 'package:vitalflow_connect/src/infrastructure/firestore/monitoring_permission.dart';
 import 'package:vitalflow_connect/src/provider/drop_down_provider.dart';
 import 'package:vitalflow_connect/src/provider/user.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/get_user_code_page.dart';
@@ -24,21 +26,38 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _CustomAppBarState extends State<CustomAppBar> {
   String selectedOption = 'Mis datos';
+  List<Map<String, dynamic>> usersTemp = [];
 
-  List<Map<String, dynamic>> options = [
-    {'name': 'Ingresar token', 'mail': 'Ingresar token'},
-    {'name': 'Generar token', 'mail': 'Generar token'},
-    {'name': 'Mis datos', 'mail': FirebaseAuth.instance.currentUser?.email},
-  ];
+  List<Map<String, dynamic>> options = [];
 
   _CustomAppBarState(
       BuildContext context, List<Map<String, dynamic>> usersToMonitor) {
-    options.addAll(usersToMonitor);
-    print('DROPDOWN: $options');
+    usersTemp = usersToMonitor;
   }
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: MonitoringPermission()
+            .getUserPermissions(FirebaseAuth.instance.currentUser?.email ?? ''),
+        builder: _buildFuture);
+  }
+
+  Widget _buildFuture(BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+    if (!snapshot.hasData) {
+      return AppBar();
+    }
+
+    options = [
+      {'name': 'Ingresar token', 'mail': 'Ingresar token'},
+      {'name': 'Generar token', 'mail': 'Generar token'},
+      {'name': 'Mis datos', 'mail': FirebaseAuth.instance.currentUser?.email},
+    ];
+
+    options.addAll(snapshot.data);
+    print('SNAPSHOT: $options');
+    print('OPTIONS: $options');
+
     return AppBar(
       automaticallyImplyLeading: false,
       title: const Text('VitalFlow'),

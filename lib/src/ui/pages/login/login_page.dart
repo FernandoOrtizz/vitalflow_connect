@@ -112,12 +112,8 @@ Future<bool> validateUser(String uid) async {
       .get();
 
   if (querySnapshot.docs.isEmpty) {
-    print("VALIDATE FALSE");
-
     return false;
   }
-
-  print("VALIDATE True");
 
   return true;
 }
