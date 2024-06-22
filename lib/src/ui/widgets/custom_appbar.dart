@@ -59,28 +59,24 @@ class _CustomAppBarState extends State<CustomAppBar> {
       {'name': 'Ingresar token', 'mail': 'Ingresar token'},
       {'name': 'Generar token', 'mail': 'Generar token'},
       {'name': 'Mis datos', 'mail': FirebaseAuth.instance.currentUser?.email},
+      ...snapshot.data,
     ];
-
-    options.addAll(snapshot.data);
-
-    DorpDownProvider actualDropDownState =
-        Provider.of<DorpDownProvider>(context, listen: false);
 
     return DropdownButton<String>(
       icon: const Icon(
         Icons.arrow_drop_down,
         color: Colors.white,
       ),
-      value: actualDropDownState.dropDownEmail,
+      value: context.watch<DorpDownProvider>().dropDownEmail,
       onChanged: (String? newValue) {
         setState(() {
           selectedOption = newValue!;
 
-          actualDropDownState.dropDownEmail = newValue;
+          context.read<DorpDownProvider>().dropDownEmail = newValue;
         });
 
         if (newValue == 'Ingresar token') {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => SetPermissions(),
@@ -90,7 +86,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         }
 
         if (newValue == 'Generar token') {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => GetUserCode(),
@@ -100,8 +96,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         }
 
         setState(() {
-          var user = Provider.of<CurrentUser>(context, listen: false);
-          user.email = options
+          context.read<CurrentUser>().email = options
               .firstWhere((element) => element['mail'] == newValue)['mail'];
 
           Navigator.pushReplacement(context,
