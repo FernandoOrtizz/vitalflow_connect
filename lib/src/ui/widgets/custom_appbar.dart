@@ -56,8 +56,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
     }
 
     List<Map<String, dynamic>> options = [
-      {'name': 'Ingresar token', 'mail': 'Ingresar token'},
-      {'name': 'Generar token', 'mail': 'Generar token'},
+      {'name': 'Ingresar Código', 'mail': 'Ingresar token'},
+      {'name': 'Generar Código', 'mail': 'Generar token'},
       {'name': 'Mis datos', 'mail': FirebaseAuth.instance.currentUser?.email},
       ...snapshot.data,
     ];
