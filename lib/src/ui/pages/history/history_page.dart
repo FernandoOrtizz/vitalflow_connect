@@ -7,6 +7,7 @@ import 'package:vitalflow_connect/src/infrastructure/firestore/calories_expended
 import 'package:vitalflow_connect/src/infrastructure/firestore/heart_rate.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/resting_heart_rate.dart';
 import 'package:vitalflow_connect/src/provider/user.dart';
+import 'package:vitalflow_connect/src/ui/pages/account/account.dart';
 import 'package:vitalflow_connect/src/ui/pages/history/history_stats_page.dart';
 import 'package:vitalflow_connect/src/ui/pages/history/history_stats_page_monthly.dart';
 import 'package:vitalflow_connect/src/ui/pages/history/history_stats_page_weekly.dart';
@@ -178,8 +179,19 @@ class _HistoryPageState extends State<HistoryPage> {
 
             widgetList.add(GestureDetector(
               onTap: () async {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                );
                 Map<String, Map<String, double>> data = await report
                     .getMonthlyDataGroupedByWeek(_email, startDate, endDate);
+
+                Navigator.pop(context);
 
                 Navigator.push(
                     context,
@@ -265,6 +277,10 @@ class _HistoryPageState extends State<HistoryPage> {
           if (index == 0) {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const HomePage()));
+          }
+          if (index == 2) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const AccountPage()));
           }
         },
       ),

@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:googleapis/doubleclickbidmanager/v2.dart';
 import 'package:provider/provider.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/monitoring_permission.dart';
 import 'package:vitalflow_connect/src/provider/drop_down_provider.dart';
@@ -55,79 +54,91 @@ class _CustomAppBarState extends State<CustomAppBar> {
       return const Text('Cargando...');
     }
 
-    List<Map<String, dynamic>> options = [
+    List<Map<String, dynamic>> options = [];
+
+    options = [
       {'name': 'Ingresar Código', 'mail': 'Ingresar token'},
       {'name': 'Generar Código', 'mail': 'Generar token'},
       {'name': 'Mis datos', 'mail': FirebaseAuth.instance.currentUser?.email},
       ...snapshot.data,
     ];
 
-    return DropdownButton<String>(
-      icon: const Icon(
-        Icons.arrow_drop_down,
-        color: Colors.white,
-      ),
-      value: context.watch<DorpDownProvider>().dropDownEmail,
-      onChanged: (String? newValue) {
-        setState(() {
-          selectedOption = newValue!;
+    print("OPTIONS");
+    print(options);
+    print("CURRENT USER PROVIDER");
+    print(context.read<CurrentUser>().email);
 
-          context.read<DorpDownProvider>().dropDownEmail = newValue;
-        });
+    try {
+      return DropdownButton<String>(
+        icon: const Icon(
+          Icons.arrow_drop_down,
+          color: Colors.white,
+        ),
+        value: context.watch<DorpDownProvider>().dropDownEmail,
+        onChanged: (String? newValue) {
+          setState(() {
+            selectedOption = newValue!;
 
-        if (newValue == 'Ingresar token') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SetPermissions(),
-            ),
-          );
-          return;
-        }
+            context.read<DorpDownProvider>().dropDownEmail = newValue;
+          });
 
-        if (newValue == 'Generar token') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => GetUserCode(),
-            ),
-          );
-          return;
-        }
+          if (newValue == 'Ingresar token') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SetPermissions(),
+              ),
+            );
+            return;
+          }
 
-        setState(() {
-          context.read<CurrentUser>().email = options
-              .firstWhere((element) => element['mail'] == newValue)['mail'];
+          if (newValue == 'Generar token') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => GetUserCode(),
+              ),
+            );
+            return;
+          }
 
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const HomePage()));
-        });
-      },
-      items: options.map((option) {
-        return DropdownMenuItem<String>(
-          value: option['mail'],
-          child: Container(
-            decoration: BoxDecoration(
-              color: option == selectedOption
-                  ? Colors.deepPurple.shade400
-                  : null, // Color de fondo blanco con opacidad
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              child: Text(
-                option['name'],
-                style: TextStyle(
-                  color: option == selectedOption
-                      ? Colors.white
-                      : Colors.deepPurple,
+          setState(() {
+            context.read<CurrentUser>().email = options
+                .firstWhere((element) => element['mail'] == newValue)['mail'];
+
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const HomePage()));
+          });
+        },
+        items: options.map((option) {
+          return DropdownMenuItem<String>(
+            value: option['mail'],
+            child: Container(
+              decoration: BoxDecoration(
+                color: option == selectedOption
+                    ? Colors.deepPurple.shade400
+                    : null, // Color de fondo blanco con opacidad
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: Text(
+                  option['name'],
+                  style: TextStyle(
+                    color: option == selectedOption
+                        ? Colors.white
+                        : Colors.deepPurple,
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      }).toList(),
-    );
+          );
+        }).toList(),
+      );
+    } catch (err) {
+      print(err);
+      return Text('data');
+    }
   }
 }
