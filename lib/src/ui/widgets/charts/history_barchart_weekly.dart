@@ -60,7 +60,7 @@ class BarChartSample1State extends State<HistoryBarchartWeekly> {
                     widget.title,
                     style: TextStyle(
                       color: widget.color,
-                      fontSize: 18,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:vitalflow_connect/src/infrastructure/firestore/monitoring_permission.dart';
 import 'package:vitalflow_connect/src/provider/user.dart';
+import 'package:vitalflow_connect/src/ui/pages/account/account.dart';
 import 'package:vitalflow_connect/src/ui/pages/history/history_page.dart';
-import 'package:vitalflow_connect/src/ui/pages/home/home_page.dart';
 import 'package:vitalflow_connect/src/ui/widgets/bottom_menu.dart';
 import 'package:vitalflow_connect/src/ui/widgets/custom_appbar.dart';
 
@@ -64,6 +63,19 @@ class GetUserCode extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomMenu(
+        currentIndex: 0,
+        onTap: (index) {
+          if (index == 1) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const HistoryPage()));
+          }
+          if (index == 2) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const AccountPage()));
+          }
+        },
       ),
     );
   }

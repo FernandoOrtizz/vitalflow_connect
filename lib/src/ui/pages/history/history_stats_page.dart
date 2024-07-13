@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vitalflow_connect/src/provider/user.dart';
+import 'package:vitalflow_connect/src/ui/pages/account/account.dart';
+import 'package:vitalflow_connect/src/ui/pages/home/home_page.dart';
+import 'package:vitalflow_connect/src/ui/widgets/bottom_menu.dart';
 import 'package:vitalflow_connect/src/ui/widgets/custom_appbar.dart';
 import 'package:vitalflow_connect/src/ui/widgets/charts/history_barchart.dart';
 
@@ -86,6 +89,19 @@ class HistoryStatsPage extends StatelessWidget {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomMenu(
+        currentIndex: 1,
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const HomePage()));
+          }
+          if (index == 2) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const AccountPage()));
+          }
+        },
       ),
     );
   }

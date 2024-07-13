@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:googleapis/admin/directory_v1.dart';
 import 'package:provider/provider.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/activity.dart';
 import 'package:vitalflow_connect/src/infrastructure/firestore/calories_expended.dart';
@@ -9,6 +8,7 @@ import 'package:vitalflow_connect/src/infrastructure/firestore/monitoring_permis
 import 'package:vitalflow_connect/src/infrastructure/firestore/resting_heart_rate.dart';
 import 'package:vitalflow_connect/src/infrastructure/google_signin/signin.dart';
 import 'package:vitalflow_connect/src/provider/user.dart';
+import 'package:vitalflow_connect/src/ui/pages/account/account.dart';
 import 'package:vitalflow_connect/src/ui/pages/history/history_page.dart';
 import 'package:vitalflow_connect/src/ui/pages/home/home_controller.dart';
 import 'package:vitalflow_connect/src/ui/widgets/bottom_menu.dart';
@@ -37,9 +37,6 @@ class _HomePageState extends State<HomePage> {
     if (!snapshot.hasData) {
       return const Scaffold();
     }
-
-    print('HOME ++++++++');
-    print(snapshot.data);
 
     final controller = HomeController(
         googleAuthService: context.watch<GoogleAuth>(),
@@ -90,6 +87,10 @@ class _HomePageState extends State<HomePage> {
           if (index == 1) {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => const HistoryPage()));
+          }
+          if (index == 2) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const AccountPage()));
           }
         },
       ),

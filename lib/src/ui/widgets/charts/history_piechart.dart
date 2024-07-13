@@ -15,12 +15,11 @@ class HistoryPieChart extends StatefulWidget {
       required this.color});
 
   @override
-  // ignore: no_logic_in_create_state
   State<StatefulWidget> createState() => HistoryPieChartState(
       weekData: data, title: title, icon: icon, color: color);
 }
 
-class HistoryPieChartState extends State {
+class HistoryPieChartState extends State<HistoryPieChart> {
   Map<String, double> weekData = {};
   String? title;
   Icon? icon;
@@ -42,55 +41,73 @@ class HistoryPieChartState extends State {
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> widgets = [];
-
+    List<Widget> legendWidgets = [];
     int index = 0;
     weekData.forEach((key, value) {
-      widgets.addAll([
-        Text(key,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              backgroundColor:
-                  colorByIndex[index], // Establecer el color de fondo
-            )),
-        const SizedBox(
-          height: 1,
-        )
+      legendWidgets.addAll([
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: Row(
+            children: [
+              Container(
+                width: 12,
+                height: 12,
+                color: colorByIndex[index],
+              ),
+              const SizedBox(width: 5),
+              Text(
+                key,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
+        ),
       ]);
-
       index++;
     });
 
-    return AspectRatio(
-      aspectRatio: 1,
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Center(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 30,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                icon!,
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  title ?? '',
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 3,
+                blurRadius: 5,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  icon!,
+                  const SizedBox(width: 10),
+                  Text(
+                    title ?? '',
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: AspectRatio(
-                aspectRatio: 1,
+                ],
+              ),
+              const SizedBox(height: 20),
+              AspectRatio(
+                aspectRatio: 1.2,
                 child: PieChart(
                   PieChartData(
                     pieTouchData: PieTouchData(
@@ -107,28 +124,20 @@ class HistoryPieChartState extends State {
                         });
                       },
                     ),
-                    borderData: FlBorderData(
-                      show: false,
-                    ),
+                    borderData: FlBorderData(show: false),
                     sectionsSpace: 0,
                     centerSpaceRadius: 40,
                     sections: showingSections(colorByIndex, weekData),
                   ),
                 ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Column(
-                  children: [
-                    ...widgets,
-                  ],
-                )
-              ],
-            ),
-          ],
+              const SizedBox(height: 20),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: legendWidgets,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -138,7 +147,7 @@ class HistoryPieChartState extends State {
       Map<int, MaterialColor> colorByIndex, Map<String, double> weekDataMap) {
     return List.generate(weekDataMap.length, (i) {
       final isTouched = i == touchedIndex;
-      final fontSize = isTouched ? 25.0 : 16.0;
+      final fontSize = isTouched ? 18.0 : 14.0;
       final radius = isTouched ? 60.0 : 50.0;
       const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
 
