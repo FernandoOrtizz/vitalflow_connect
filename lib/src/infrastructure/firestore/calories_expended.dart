@@ -57,14 +57,14 @@ class CaloriesExpended implements Destination, VitalFlowRepository {
           .orderBy("date", descending: true)
           .get();
 
-      Map<String, List<double>> data = {};
+      Map<String, List<dynamic>> data = {};
       for (var docSnapshot in querySnapshot.docs) {
         Map<String, dynamic> doc = docSnapshot.data() as Map<String, dynamic>;
 
         DateTime date = doc['date'].toDate() ?? '';
 
         String weekDayKey = translateDay[DateFormat('EEEE').format(date)]!;
-        List<double>? values = data[weekDayKey];
+        List<dynamic>? values = data[weekDayKey];
         values ??= [];
         values.add(doc['value']);
 
@@ -157,7 +157,7 @@ class CaloriesExpended implements Destination, VitalFlowRepository {
           .orderBy("date", descending: true)
           .get();
 
-      Map<String, List<double>> data = {};
+      Map<String, List<dynamic>> data = {};
       for (var docSnapshot in querySnapshot.docs) {
         Map<String, dynamic> doc = docSnapshot.data() as Map<String, dynamic>;
 
@@ -165,7 +165,7 @@ class CaloriesExpended implements Destination, VitalFlowRepository {
 
         String monthKey = translateMonth[DateFormat('MMMM').format(date)] ?? '';
 
-        List<double>? values = data[monthKey];
+        List<dynamic>? values = data[monthKey];
         values ??= [];
         values.add(doc['value']);
 

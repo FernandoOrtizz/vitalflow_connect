@@ -99,7 +99,7 @@ class HistoryPieChartState extends State<HistoryPieChart> {
                     title ?? '',
                     style: TextStyle(
                       color: color,
-                      fontSize: 20,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
